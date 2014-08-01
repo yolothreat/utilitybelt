@@ -1,10 +1,15 @@
 import GeoIP
 import json
+import re
 
 gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
 def is_IPv4Address(ipv4address):
-    pass
+    ip_regex = '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+    if re.match(ip_regex, ipv4address):
+        return True
+    else:
+        return False
 
 def ip_to_geo(ipaddress):
     """Convert IP to Geographic Information"""
