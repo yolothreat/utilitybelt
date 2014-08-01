@@ -52,3 +52,8 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+# Virtual Environment
+venv
+
+## Data
+data/*
