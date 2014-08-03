@@ -1,3 +1,16 @@
+"""
+ _   _ _   _ _ _ _          ______      _ _
+| | | | | (_) (_) |         | ___ \    | | |
+| | | | |_ _| |_| |_ _   _  | |_/ / ___| | |_
+| | | | __| | | | __| | | | | ___ \/ _ \ | __|
+| |_| | |_| | | | |_| |_| | | |_/ /  __/ | |_
+ \___/ \__|_|_|_|\__|\__, | \____/ \___|_|\__|
+                      __/ |
+                     |___/
+
+A library to make you a Python CND Batman
+"""
+
 import GeoIP
 import json
 import re
@@ -6,7 +19,7 @@ gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
 def is_IPv4Address(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
-    
+
     ip_regex = '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
     if re.match(ip_regex, ipv4address):
         return True
