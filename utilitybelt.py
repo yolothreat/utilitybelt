@@ -5,6 +5,8 @@ import re
 gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
 def is_IPv4Address(ipv4address):
+    """Returns true for valid IPv4 Addresses, false for invalid."""
+    
     ip_regex = '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
     if re.match(ip_regex, ipv4address):
         return True
