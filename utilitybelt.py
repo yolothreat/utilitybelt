@@ -120,7 +120,8 @@ def reverse_dns_sna(ipaddress):
         names = []
 
         for item in r.json()['answer']:
-            names.append(str(item['rdata']))
+            name = str(item['rdata']).strip(".")
+            names.append(name)
 
         return names
     else:
