@@ -130,5 +130,5 @@ def reverse_dns_sna(ipaddress):
 def reverse_dns(ipaddress):
     """Returns a list of the dns names that point to a given ipaddress"""
 
-    name, alias, addresslist = socket.gethostbyaddr(ipadderss)
+    name, alias, addresslist = socket.gethostbyaddr(ipaddress)
     return name
