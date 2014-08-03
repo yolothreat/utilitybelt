@@ -12,8 +12,8 @@ A library to make you a Python CND Batman
 """
 
 import GeoIP
-import json
-import re
+import requests
+import json, re, socket
 
 gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
@@ -110,3 +110,26 @@ def ips_to_geojson(ipaddresses):
     }
 
     return json.dumps(points)
+
+def reverse_dns_sna(ipaddress):
+    """Returns a list of the dns names that point to a given ipaddress using StatDNS API"""
+
+    r = requests.get("http://api.statdns.com/x/%s" % ipaddress)
+
+    if r.status_code == 200:
+        names = []
+
+        for item in r.json()['answer']:
+            name = str(item['rdata']).strip(".")
+            names.append(name)
+
+        return names
+    else:
+        raise Exception("No PTR record for %s" % ipaddress)
+        return ""
+
+def reverse_dns(ipaddress):
+    """Returns a list of the dns names that point to a given ipaddress"""
+
+    name, alias, addresslist = socket.gethostbyaddr(ipaddress)
+    return [str(name)]
