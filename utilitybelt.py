@@ -120,15 +120,15 @@ def reverse_dns_sna(ipaddress):
         names = []
 
         for item in r.json()['answer']:
-            names.append(item['rdata'])
+            names.append(str(item['rdata']))
 
         return names
     else:
         raise Exception("No PTR record for %s" % ipaddress)
-        return []
+        return ""
 
 def reverse_dns(ipaddress):
     """Returns a list of the dns names that point to a given ipaddress"""
 
     name, alias, addresslist = socket.gethostbyaddr(ipaddress)
-    return name
+    return [str(name)]
