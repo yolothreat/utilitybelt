@@ -29,10 +29,10 @@ class TestUB(unittest.TestCase):
         pass
 
     def test_ip_to_geojson(self):
-        pass
+        pass #self.assertIsInstance(ub.ips_to_geojson("192.30.252.130"), dict)
 
     def test_ips_to_geojson(self):
-        pass
+        pass #self.assertIsInstance(ub.ips_to_geojson(["192.30.252.130", "127.0.0.1"]), list)
 
     ## Reverse DNS Tests
     def test_reverse_dns(self):
