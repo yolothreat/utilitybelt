@@ -22,17 +22,17 @@ class TestUB(unittest.TestCase):
     def test_ip_to_geo(self):
         self.assertIsInstance(ub.ip_to_geo("192.30.252.130"), dict)
         self.assertEqual(ub.ip_to_geo("192.30.252.130")["city"], 'San Francisco')
-        self.assertEqual(ub.ip_to_geo("192.30.252.130")["region"], 'California')
-        self.assertEqual(ub.ip_to_geo("192.30.252.130")["country"], 'United States')
+        self.assertEqual(ub.ip_to_geo("192.30.252.130")["region_name"], 'California')
+        self.assertEqual(ub.ip_to_geo("192.30.252.130")["country_name"], 'United States')
 
     def test_domain_to_geo(self):
         pass
 
     def test_ip_to_geojson(self):
-        pass #self.assertIsInstance(ub.ips_to_geojson("192.30.252.130"), dict)
+        self.assertIsInstance(ub.ip_to_geojson("192.30.252.130"), dict)
 
     def test_ips_to_geojson(self):
-        pass #self.assertIsInstance(ub.ips_to_geojson(["192.30.252.130", "127.0.0.1"]), list)
+        self.assertIsInstance(ub.ips_to_geojson(["192.30.252.130", "74.125.236.169"]), dict)
 
     ## Reverse DNS Tests
     def test_reverse_dns(self):

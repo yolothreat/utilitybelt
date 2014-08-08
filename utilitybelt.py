@@ -29,30 +29,14 @@ def is_IPv4Address(ipv4address):
 def ip_to_geo(ipaddress):
     """Convert IP to Geographic Information"""
 
-    gir = gi.record_by_addr(ipaddress)
-
-    geo = {
-        "city": gir["city"],
-        "region": gir["region_name"],
-        "country": gir["country_name"],
-        "latitude": gir["latitude"],
-        "longitude": gir["longitude"]
-    }
+    geo = gi.record_by_addr(ipaddress)
 
     return geo
 
 def domain_to_geo(domain):
     """Convert Domain to Geographic Information"""
 
-    gir = gi.record_by_name(domain)
-
-    geo = {
-        "city": gir["city"],
-        "region": gir["region_name"],
-        "country": gir["country_name"],
-        "latitude": gir["latitude"],
-        "longitude": gir["longitude"]
-    }
+    geo = gi.record_by_name(domain)
 
     return json.dumps(geo)
 
