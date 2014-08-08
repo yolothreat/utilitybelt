@@ -43,7 +43,7 @@ def domain_to_geo(domain):
 def ip_to_geojson(ipaddress, name="Point"):
     """Generate GeoJSON for given IP address"""
 
-    geo = ip_to_geo(ipaddress)
+    geo = gi.record_by_addr(ipaddress)
 
     point = {
         "type": "FeatureCollection",
@@ -72,7 +72,7 @@ def ips_to_geojson(ipaddresses):
     features = []
 
     for ipaddress in ipaddresses:
-        geo = ip_to_geo(ipaddress)
+        geo = gi.record_by_addr(ipaddress)
 
         features.append({
             "type": "Feature",
