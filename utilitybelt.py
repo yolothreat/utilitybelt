@@ -38,7 +38,7 @@ def domain_to_geo(domain):
 
     geo = gi.record_by_name(domain)
 
-    return json.dumps(geo)
+    return geo
 
 def ip_to_geojson(ipaddress, name="Point"):
     """Generate GeoJSON for given IP address"""
@@ -64,7 +64,7 @@ def ip_to_geojson(ipaddress, name="Point"):
         ]
     }
 
-    return json.dumps(point)
+    return point
 
 def ips_to_geojson(ipaddresses):
     """Generate GeoJSON for given IP address"""
@@ -93,7 +93,7 @@ def ips_to_geojson(ipaddresses):
         "features": features
     }
 
-    return json.dumps(points)
+    return points
 
 def reverse_dns_sna(ipaddress):
     """Returns a list of the dns names that point to a given ipaddress using StatDNS API"""
