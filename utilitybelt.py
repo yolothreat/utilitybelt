@@ -29,37 +29,21 @@ def is_IPv4Address(ipv4address):
 def ip_to_geo(ipaddress):
     """Convert IP to Geographic Information"""
 
-    gir = gi.record_by_addr(ipaddress)
-
-    geo = {
-        "city": gir["city"],
-        "region": gir["region_name"],
-        "country": gir["country_name"],
-        "latitude": gir["latitude"],
-        "longitude": gir["longitude"]
-    }
+    geo = gi.record_by_addr(ipaddress)
 
     return geo
 
 def domain_to_geo(domain):
     """Convert Domain to Geographic Information"""
 
-    gir = gi.record_by_name(domain)
+    geo = gi.record_by_name(domain)
 
-    geo = {
-        "city": gir["city"],
-        "region": gir["region_name"],
-        "country": gir["country_name"],
-        "latitude": gir["latitude"],
-        "longitude": gir["longitude"]
-    }
-
-    return json.dumps(geo)
+    return geo
 
 def ip_to_geojson(ipaddress, name="Point"):
     """Generate GeoJSON for given IP address"""
 
-    geo = ip_to_geo(ipaddress)
+    geo = gi.record_by_addr(ipaddress)
 
     point = {
         "type": "FeatureCollection",
@@ -80,7 +64,7 @@ def ip_to_geojson(ipaddress, name="Point"):
         ]
     }
 
-    return json.dumps(point)
+    return point
 
 def ips_to_geojson(ipaddresses):
     """Generate GeoJSON for given IP address"""
@@ -88,7 +72,7 @@ def ips_to_geojson(ipaddresses):
     features = []
 
     for ipaddress in ipaddresses:
-        geo = ip_to_geo(ipaddress)
+        geo = gi.record_by_addr(ipaddress)
 
         features.append({
             "type": "Feature",
@@ -109,7 +93,7 @@ def ips_to_geojson(ipaddresses):
         "features": features
     }
 
-    return json.dumps(points)
+    return points
 
 def reverse_dns_sna(ipaddress):
     """Returns a list of the dns names that point to a given ipaddress using StatDNS API"""
