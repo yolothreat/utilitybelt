@@ -53,5 +53,10 @@ class TestUB(unittest.TestCase):
         self.assertIsInstance(ub.ip_to_long("192.30.252.130"), int)
         self.assertEqual(ub.ip_to_long("192.30.252.130"), 3223256194)
 
+    def test_ip_between(self):
+        self.assertIsInstance(ub.ip_between("192.30.252.130", "1.1.1.1", "255.255.255.255"), bool)
+        self.assertTrue(ub.ip_between("192.30.252.130", "1.1.1.1", "255.255.255.255"))
+        self.assertFalse(ub.ip_between("192.30.252.130", "1.1.1.1", "255.255.255"))
+
 if __name__ == '__main__':
     unittest.main()
