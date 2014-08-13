@@ -14,8 +14,15 @@ A library to make you a Python CND Batman
 import GeoIP
 import requests
 import json, re, socket
+import socket
+import struct
 
 gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
+
+def ip_to_long(ip):
+    """Convert an IPv4Address string to long"""
+    packedIP = socket.inet_aton(ip)
+    return struct.unpack("!L", packedIP)[0]
 
 def is_IPv4Address(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""

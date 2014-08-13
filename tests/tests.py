@@ -49,5 +49,9 @@ class TestUB(unittest.TestCase):
         self.assertNotEqual(ub.reverse_dns("192.30.252.130"), 'github.com')
         self.assertNotEqual(ub.reverse_dns("192.30.252.130"), [])
 
+    def test_ip_to_long(self):
+        self.assertIsInstance(ub.ip_to_long("192.30.252.130"), int)
+        self.assertEqual(ub.ip_to_long("192.30.252.130"), 3223256194)
+
 if __name__ == '__main__':
     unittest.main()
