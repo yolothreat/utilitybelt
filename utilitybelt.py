@@ -39,6 +39,16 @@ def ip_between(ip, start, finish):
     else:
         return False
 
+def is_rfc1918(ip):
+    if ip_between(ip, "10.0.0.0", "10.255.255.255"):
+        return True
+    elif ip_between(ip, "172.16.0.0", "172.31.255.255"):
+        return True
+    elif ip_between(ip, "192.168.0.0", "192.168.255.255"):
+        return True
+    else:
+        return False
+
 def is_IPv4Address(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
 
