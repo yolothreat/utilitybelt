@@ -68,6 +68,12 @@ def is_IPv4Address(ipv4address):
     return re.match(re_ipv4, ipv4address)
 
 
+def is_DNS(address):
+    """Returns true for valid DNS addresses, false for invalid."""
+
+    return re.match(re_domain, address)
+
+
 def ip_to_geo(ipaddress):
     """Convert IP to Geographic Information"""
 
@@ -235,8 +241,6 @@ def pdns_ip_check(ip, dnsdb_api):
     url = 'https://api.dnsdb.info/lookup/rdata/ip/%s?limit=50' % ip
     headers = {'Accept': 'application/json', 'X-Api-Key': dnsdb_api}
 
-    if DEBUG:
-        sys.stderr.write("Attempting pDNS retrieval for %s\n" % ip)
     response = requests.get(url, headers=headers)
     return response.json()
 
@@ -329,7 +333,7 @@ def urlvoid_ip_check(ip):
 
 def pt_check(addr, pt_api):
     # TODO: Replace with is_ipv4() and is_dns()
-    if is_ipv4address(addr) or is_dns(addr):
+    if is_IPv4Address(addr) or is_DNS(addr):
         pt = PassiveTotal(pt_api)
         results = pt.search(addr)
         if results['success']:
