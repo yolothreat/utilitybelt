@@ -13,7 +13,9 @@ A library to make you a Python CND Batman
 
 import GeoIP
 import requests
-import json, re, socket
+import json
+import re
+import socket
 
 gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
@@ -38,10 +40,11 @@ re_zip = '\W([\w-]+\.)(zip|zipx|7z|rar|tar|gz)'
 re_img = '\W([\w-]+\.)(jpeg|jpg|gif|png|tiff|bmp)'
 re_flash = '\W([\w-]+\.)(flv|swf)'
 
+
 def is_IPv4Address(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
 
-    return re.match(re_ipv4, ipv4address):
+    return re.match(re_ipv4, ipv4address)
 
 
 def ip_to_geo(ipaddress):
@@ -81,6 +84,7 @@ def ip_to_geojson(ipaddress, name="Point"):
     }
 
     return point
+
 
 def ips_to_geojson(ipaddresses):
     """Generate GeoJSON for given IP address"""
