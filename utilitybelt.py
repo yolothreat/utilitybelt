@@ -139,3 +139,185 @@ def reverse_dns(ipaddress):
 
     name, alias, addresslist = socket.gethostbyaddr(ipaddress)
     return [str(name)]
+
+
+# Checks VirusTotal for occurrences of an IP address
+def vt_ip_check(ip, vt_api):
+    try:
+        url = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
+        parameters = {'ip': ip, 'apikey': vt_api}
+        response = requests.get(url, params=parameters)
+        return response.json()
+    except:
+        return None
+
+
+# Checks VirusTotal for occurrences of a domain name
+def vt_name_check(domain, vt_api):
+    try:
+        url = 'https://www.virustotal.com/vtapi/v2/domain/report'
+        parameters = {'domain': domain, 'apikey': vt_api}
+        response = requests.get(url, params=parameters)
+        return response.json()
+    except:
+        return None
+
+
+# Checks Hurricane Electric for DNS information on an IP address
+def he_ip_check(ip):
+    if DEBUG:
+        sys.stderr.write("Attempting HE retrieval for %s\n" % ip)
+    url = 'http://bgp.he.net/ip/%s#_dns' % ip
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36'}
+    response = requests.get(url, headers=headers)
+    if response.text:
+        # TODO: use BeautifulSoup
+        pattern = re.compile('\/dns\/.+\".title\=\".+\"\>(.+)<\/a\>', re.IGNORECASE)
+        hostnames = re.findall(pattern, response.text)
+        return hostnames
+    else:
+        return None
+
+
+# Checks Hurricane Electric for DNS information on an IP address
+def he_name_check(domain):
+    url = 'http://bgp.he.net/dns/%s#_whois' % domain
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36'}
+    response = requests.get(url, headers=headers)
+    if response.text:
+        # TODO: use BeautifulSoup
+        pattern = re.compile('\/dns\/.+\".title\=\".+\"\>(.+)<\/a\>', re.IGNORECASE)
+        hostnames = re.findall(pattern, response.text)
+        return hostnames
+    else:
+        return None
+
+
+# Checks SANS ISC for attack data on an IP address
+def isc_ip_check(ip):
+    try:
+        url = 'https://isc.sans.edu/api/ip/%s?json' % ip
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36'}
+        response = requests.get(url, headers=headers)
+        data = response.json()
+        return {'count': data['count']['text'],
+                'attacks': data['attacks']['text'],
+                'mindate': data['mindate']['text'],
+                'maxdate': data['maxdate']['text']}
+    except:
+        return None
+
+
+# Checks Farsight passive DNS for information on an IP address
+def pdns_ip_check(ip, dnsdb_api):
+    pdns_results = []
+    url = 'https://api.dnsdb.info/lookup/rdata/ip/%s?limit=50' % ip
+    headers = {'Accept': 'application/json', 'X-Api-Key': dnsdb_api}
+
+    if DEBUG:
+        sys.stderr.write("Attempting pDNS retrieval for %s\n" % ip)
+    response = requests.get(url, headers=headers)
+    return response.json()
+
+
+# Checks Farsight passive DNS for information on a name
+def pdns_name_check(name, dnsdb_api):
+    pdns_results = []
+    url = 'https://api.dnsdb.info/lookup/rrset/name/%s?limit=50' % name
+    headers = {'Accept': 'application/json', 'X-Api-Key': dnsdb_api}
+
+    response = requests.get(url, headers=headers)
+    return response.json()
+
+
+# Checks ipinfo.io for basic WHOIS-type data on an IP address
+def ipinfo_ip_check(ip):
+    response = requests.get('http://ipinfo.io/%s/json' % ip)
+    return response.json()
+
+
+def ipvoid_check(ip):
+    if not re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ip):
+        return None
+
+    return_dict = dict()
+    url = 'http://ipvoid.com/scan/%s/' % ip
+    response = requests.get(url)
+    data = BeautifulSoup(response.text)
+    if data.findAll('span', attrs={'class': 'label label-success'}):
+        return None
+    elif data.findAll('span', attrs={'class': 'label label-danger'}):
+        for each in data.findAll('img', alt='Alert'):
+            detect_site = each.parent.parent.td.text.lstrip()
+            detect_url = each.parent.a['href']
+            return_dict[detect_site] = detect_url
+    else:
+        return None
+
+    if len(return_dict) == 0:
+        return None
+    return return_dict
+
+
+def urlvoid_check(name):
+    if not re.match('[\.a-zA-Z]', name):
+        return None
+
+    return_dict = dict()
+    url = 'http://urlvoid.com/scan/%s/' % name
+    response = requests.get(url)
+    data = BeautifulSoup(response.text)
+    if data.findAll('div', attrs={'class': 'bs-callout bs-callout-info'}):
+        return None
+    elif data.findAll('div', attrs={'class': 'bs-callout bs-callout-warning'}):
+        for each in data.findAll('img', alt='Alert'):
+            detect_site = each.parent.parent.td.text.lstrip()
+            detect_url = each.parent.a['href']
+            return_dict[detect_site] = detect_url
+    else:
+        if DEBUG:
+            sys.stderr.write('Could not find URLVoid decision for %s\n' % name)
+        return None
+
+    if len(return_dict) == 0:
+        return None
+    return return_dict
+
+
+def urlvoid_ip_check(ip):
+    if not re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ip):
+        return None
+
+    return_dict = dict()
+    url = 'http://urlvoid.com/ip/%s/' % ip
+    response = requests.get(url)
+    data = BeautifulSoup(response.text)
+    h1 = data.findAll('h1')[0].text
+    if h1 == 'Report not found':
+        return None
+    elif re.match('^IP', h1):
+        return_dict['bad_names'] = []
+        return_dict['other_names'] = []
+        for each in data.findAll('img', alt='Alert'):
+            return_dict['bad_names'].append(each.parent.text.strip())
+        for each in data.findAll('img', alt='Valid'):
+            return_dict['other_names'].append(each.parent.text.strip())
+    else:
+        return None
+
+    if len(return_dict) == 0:
+        return None
+    return return_dict
+
+
+def pt_check(addr, pt):
+    # TODO: Replace with is_ipv4() and is_dns()
+    if not (re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', addr) or re.match('[\.a-zA-Z]', addr)):
+        return None
+
+    results = pt.search(addr)
+    if results['success']:
+        return results['results']
+    else:
+        return None
+
