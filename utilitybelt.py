@@ -170,6 +170,9 @@ def reverse_dns(ipaddress):
 
 # Checks VirusTotal for occurrences of an IP address
 def vt_ip_check(ip, vt_api):
+    if not is_IPv4Address(ip):
+        return None
+
     try:
         url = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
         parameters = {'ip': ip, 'apikey': vt_api}
@@ -181,6 +184,9 @@ def vt_ip_check(ip, vt_api):
 
 # Checks VirusTotal for occurrences of a domain name
 def vt_name_check(domain, vt_api):
+    if not is_DNS(domain):
+        return None
+
     try:
         url = 'https://www.virustotal.com/vtapi/v2/domain/report'
         parameters = {'domain': domain, 'apikey': vt_api}
@@ -192,8 +198,9 @@ def vt_name_check(domain, vt_api):
 
 # Checks Hurricane Electric for DNS information on an IP address
 def he_ip_check(ip):
-    if DEBUG:
-        sys.stderr.write("Attempting HE retrieval for %s\n" % ip)
+    if not is_IPv4Address(ip):
+        return None
+
     url = 'http://bgp.he.net/ip/%s#_dns' % ip
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36'}
     response = requests.get(url, headers=headers)
@@ -208,6 +215,9 @@ def he_ip_check(ip):
 
 # Checks Hurricane Electric for DNS information on an IP address
 def he_name_check(domain):
+    if not is_DNS(domain):
+        return None
+
     url = 'http://bgp.he.net/dns/%s#_whois' % domain
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36'}
     response = requests.get(url, headers=headers)
@@ -222,6 +232,9 @@ def he_name_check(domain):
 
 # Checks SANS ISC for attack data on an IP address
 def isc_ip_check(ip):
+    if not is_IPv4Address(ip):
+        return None
+
     try:
         url = 'https://isc.sans.edu/api/ip/%s?json' % ip
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36'}
@@ -237,6 +250,9 @@ def isc_ip_check(ip):
 
 # Checks Farsight passive DNS for information on an IP address
 def pdns_ip_check(ip, dnsdb_api):
+    if not is_IPv4Address(ip):
+        return None
+
     pdns_results = []
     url = 'https://api.dnsdb.info/lookup/rdata/ip/%s?limit=50' % ip
     headers = {'Accept': 'application/json', 'X-Api-Key': dnsdb_api}
@@ -247,6 +263,9 @@ def pdns_ip_check(ip, dnsdb_api):
 
 # Checks Farsight passive DNS for information on a name
 def pdns_name_check(name, dnsdb_api):
+    if not is_DNS(ip):
+        return None
+
     pdns_results = []
     url = 'https://api.dnsdb.info/lookup/rrset/name/%s?limit=50' % name
     headers = {'Accept': 'application/json', 'X-Api-Key': dnsdb_api}
@@ -257,12 +276,15 @@ def pdns_name_check(name, dnsdb_api):
 
 # Checks ipinfo.io for basic WHOIS-type data on an IP address
 def ipinfo_ip_check(ip):
+    if not is_IPv4Address(ip):
+        return None
+
     response = requests.get('http://ipinfo.io/%s/json' % ip)
     return response.json()
 
 
 def ipvoid_check(ip):
-    if not re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ip):
+    if not is_IPv4Address(ip):
         return None
 
     return_dict = dict()
@@ -285,7 +307,7 @@ def ipvoid_check(ip):
 
 
 def urlvoid_check(name):
-    if not re.match('[\.a-zA-Z]', name):
+    if not is_DNS(name):
         return None
 
     return_dict = dict()
@@ -306,7 +328,7 @@ def urlvoid_check(name):
 
 
 def urlvoid_ip_check(ip):
-    if not re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ip):
+    if not is_IPv4Address(ip):
         return None
 
     return_dict = dict()
