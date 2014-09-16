@@ -12,10 +12,13 @@ A library to make you a Python CND Batman
 """
 
 import GeoIP
-import requests
 import json
+import netaddr
 import re
+import requests
 import socket
+from PassiveTotal import PassiveTotal
+from bs4 import BeautifulSoup
 
 gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
@@ -39,6 +42,24 @@ re_exe = '\W([\w-]+\.)(exe|dll|jar)'
 re_zip = '\W([\w-]+\.)(zip|zipx|7z|rar|tar|gz)'
 re_img = '\W([\w-]+\.)(jpeg|jpg|gif|png|tiff|bmp)'
 re_flash = '\W([\w-]+\.)(flv|swf)'
+
+# TODO: submit this upstream
+whitelist = [{'net': IPNetwork('10.0.0.0/8'), 'org': 'Private per RFC 1918'},
+             {'net': IPNetwork('172.16.0.0/12'), 'org': 'Private per RFC 1918'},
+             {'net': IPNetwork('192.168.0.0/16'), 'org': 'Private per RFC 1918'},
+             {'net': IPNetwork('0.0.0.0/8'), 'org': 'Invalid per RFC 1122'},
+             {'net': IPNetwork('127.0.0.0/8'), 'org': 'Loopback per RFC 1122'},
+             {'net': IPNetwork('169.254.0.0/16'), 'org': 'Link-local per RFC 3927'},
+             {'net': IPNetwork('100.64.0.0/10'), 'org': 'Shared address space per RFC 6598'},
+             {'net': IPNetwork('192.0.0.0/24'), 'org': 'IETF Protocol Assignments per RFC 6890'},
+             {'net': IPNetwork('192.0.2.0/24'), 'org': 'Documentation and examples per RFC 6890'},
+             {'net': IPNetwork('192.88.99.0/24'), 'org': 'IPv6 to IPv4 relay per RFC 3068'},
+             {'net': IPNetwork('198.18.0.0/15'), 'org': 'Network benchmark tests per RFC 2544'},
+             {'net': IPNetwork('198.51.100.0/24'), 'org': 'Documentation and examples per RFC 5737'},
+             {'net': IPNetwork('203.0.113.0/24'), 'org': 'Documentation and examples per RFC 5737'},
+             {'net': IPNetwork('224.0.0.0/4'), 'org': 'IP multicast per RFC 5771'},
+             {'net': IPNetwork('240.0.0.0/4'), 'org': 'Reserved per RFC 1700'},
+             {'net': IPNetwork('255.255.255.255/32'), 'org': 'Broadcast address per RFC 919'}]
 
 
 def is_IPv4Address(ipv4address):
@@ -274,10 +295,6 @@ def urlvoid_check(name):
             detect_site = each.parent.parent.td.text.lstrip()
             detect_url = each.parent.a['href']
             return_dict[detect_site] = detect_url
-    else:
-        if DEBUG:
-            sys.stderr.write('Could not find URLVoid decision for %s\n' % name)
-        return None
 
     if len(return_dict) == 0:
         return None
@@ -310,14 +327,12 @@ def urlvoid_ip_check(ip):
     return return_dict
 
 
-def pt_check(addr, pt):
+def pt_check(addr, pt_api):
     # TODO: Replace with is_ipv4() and is_dns()
-    if not (re.match('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', addr) or re.match('[\.a-zA-Z]', addr)):
-        return None
-
-    results = pt.search(addr)
-    if results['success']:
-        return results['results']
+    if is_ipv4address(addr) or is_dns(addr):
+        pt = PassiveTotal(pt_api)
+        results = pt.search(addr)
+        if results['success']:
+            return results['results']
     else:
         return None
-
