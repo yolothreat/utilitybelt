@@ -201,8 +201,8 @@ def reverse_dns(ipaddress):
     return [str(name)]
 
 
-# Checks VirusTotal for occurrences of an IP address
 def vt_ip_check(ip, vt_api):
+    """Checks VirusTotal for occurrences of an IP address"""
     if not is_IPv4Address(ip):
         return None
 
@@ -215,8 +215,8 @@ def vt_ip_check(ip, vt_api):
         return None
 
 
-# Checks VirusTotal for occurrences of a domain name
 def vt_name_check(domain, vt_api):
+    """Checks VirusTotal for occurrences of a domain name"""
     if not is_DNS(domain):
         return None
 
@@ -229,8 +229,8 @@ def vt_name_check(domain, vt_api):
         return None
 
 
-# Checks Hurricane Electric for DNS information on an IP address
 def he_ip_check(ip):
+    """Checks Hurricane Electric for DNS information on an IP address"""
     if not is_IPv4Address(ip):
         return None
 
@@ -246,8 +246,8 @@ def he_ip_check(ip):
         return None
 
 
-# Checks Hurricane Electric for DNS information on an IP address
 def he_name_check(domain):
+    """Checks Hurricane Electric for DNS information on an IP address"""
     if not is_DNS(domain):
         return None
 
@@ -263,8 +263,8 @@ def he_name_check(domain):
         return None
 
 
-# Checks SANS ISC for attack data on an IP address
 def isc_ip_check(ip):
+    """Checks SANS ISC for attack data on an IP address"""
     if not is_IPv4Address(ip):
         return None
 
@@ -281,8 +281,8 @@ def isc_ip_check(ip):
         return None
 
 
-# Checks Farsight passive DNS for information on an IP address
 def pdns_ip_check(ip, dnsdb_api):
+    """Checks Farsight passive DNS for information on an IP address"""
     if not is_IPv4Address(ip):
         return None
 
@@ -294,8 +294,8 @@ def pdns_ip_check(ip, dnsdb_api):
     return response.json()
 
 
-# Checks Farsight passive DNS for information on a name
 def pdns_name_check(name, dnsdb_api):
+    """Checks Farsight passive DNS for information on a name"""
     if not is_DNS(ip):
         return None
 
@@ -307,8 +307,8 @@ def pdns_name_check(name, dnsdb_api):
     return response.json()
 
 
-# Checks ipinfo.io for basic WHOIS-type data on an IP address
 def ipinfo_ip_check(ip):
+    """Checks ipinfo.io for basic WHOIS-type data on an IP address"""
     if not is_IPv4Address(ip):
         return None
 
@@ -317,6 +317,7 @@ def ipinfo_ip_check(ip):
 
 
 def ipvoid_check(ip):
+    """Checks IPVoid.com for info on an IP address"""
     if not is_IPv4Address(ip):
         return None
 
@@ -340,6 +341,7 @@ def ipvoid_check(ip):
 
 
 def urlvoid_check(name):
+    """Checks URLVoid.com for info on a domain"""
     if not is_DNS(name):
         return None
 
@@ -361,6 +363,7 @@ def urlvoid_check(name):
 
 
 def urlvoid_ip_check(ip):
+    """Checks URLVoid.com for info on an IP address"""
     if not is_IPv4Address(ip):
         return None
 
@@ -387,6 +390,7 @@ def urlvoid_ip_check(ip):
 
 
 def pt_check(addr, pt_api):
+    """Check PassiveTotal for info on an IP address or name"""
     # TODO: Replace with is_ipv4() and is_dns()
     if is_IPv4Address(addr) or is_DNS(addr):
         pt = PassiveTotal(pt_api)
