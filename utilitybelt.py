@@ -44,6 +44,7 @@ re_flash = '\W([\w-]+\.)(flv|swf)'
 
 gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
+
 def ip_to_long(ip):
     """Convert an IPv4Address string to long"""
     packedIP = socket.inet_aton(ip)
@@ -75,6 +76,7 @@ def is_rfc1918(ip):
         return True
     else:
         return False
+
 
 def is_IPv4Address(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
