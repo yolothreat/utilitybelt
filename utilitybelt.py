@@ -19,6 +19,7 @@ import requests
 import socket
 from PassiveTotal import PassiveTotal
 from bs4 import BeautifulSoup
+import struct
 
 gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
