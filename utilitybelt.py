@@ -72,7 +72,7 @@ def ip_to_long(ip):
 def ip_between(ip, start, finish):
     """Checks to see if IP is between start and finish"""
 
-    if is_IPv4Address(ip) and is_IPv4Address(start) and is_IPv4Address(finish):
+    if is_ipv4(ip) and is_ipv4(start) and is_ipv4(finish):
         ip_long = ip_to_long(ip)
         start_long = ip_to_long(start)
         finish_long = ip_to_long(finish)
@@ -96,13 +96,13 @@ def is_rfc1918(ip):
         return False
 
 
-def is_IPv4Address(ipv4address):
+def is_ipv4(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
 
     return re.match(re_ipv4, ipv4address)
 
 
-def is_DNS(address):
+def is_fqdn(address):
     """Returns true for valid DNS addresses, false for invalid."""
 
     return re.match(re_domain, address)
@@ -204,7 +204,7 @@ def reverse_dns(ipaddress):
 
 def vt_ip_check(ip, vt_api):
     """Checks VirusTotal for occurrences of an IP address"""
-    if not is_IPv4Address(ip):
+    if not is_ipv4(ip):
         return None
 
     try:
@@ -218,7 +218,7 @@ def vt_ip_check(ip, vt_api):
 
 def vt_name_check(domain, vt_api):
     """Checks VirusTotal for occurrences of a domain name"""
-    if not is_DNS(domain):
+    if not is_fqdn(domain):
         return None
 
     try:
@@ -232,7 +232,7 @@ def vt_name_check(domain, vt_api):
 
 def he_ip_check(ip):
     """Checks Hurricane Electric for DNS information on an IP address"""
-    if not is_IPv4Address(ip):
+    if not is_ipv4(ip):
         return None
 
     url = 'http://bgp.he.net/ip/%s#_dns' % ip
@@ -249,7 +249,7 @@ def he_ip_check(ip):
 
 def he_name_check(domain):
     """Checks Hurricane Electric for DNS information on an IP address"""
-    if not is_DNS(domain):
+    if not is_fqdn(domain):
         return None
 
     url = 'http://bgp.he.net/dns/%s#_whois' % domain
@@ -266,12 +266,12 @@ def he_name_check(domain):
 
 def isc_ip_check(ip):
     """Checks SANS ISC for attack data on an IP address"""
-    if not is_IPv4Address(ip):
+    if not is_ipv4(ip):
         return None
 
     try:
         url = 'https://isc.sans.edu/api/ip/%s?json' % ip
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'}
         response = requests.get(url, headers=headers)
         data = response.json()
         return {'count': data['count']['text'],
@@ -284,7 +284,7 @@ def isc_ip_check(ip):
 
 def pdns_ip_check(ip, dnsdb_api):
     """Checks Farsight passive DNS for information on an IP address"""
-    if not is_IPv4Address(ip):
+    if not is_ipv4(ip):
         return None
 
     pdns_results = []
@@ -297,7 +297,7 @@ def pdns_ip_check(ip, dnsdb_api):
 
 def pdns_name_check(name, dnsdb_api):
     """Checks Farsight passive DNS for information on a name"""
-    if not is_DNS(ip):
+    if not is_fqdn(ip):
         return None
 
     pdns_results = []
@@ -310,7 +310,7 @@ def pdns_name_check(name, dnsdb_api):
 
 def ipinfo_ip_check(ip):
     """Checks ipinfo.io for basic WHOIS-type data on an IP address"""
-    if not is_IPv4Address(ip):
+    if not is_ipv4(ip):
         return None
 
     response = requests.get('http://ipinfo.io/%s/json' % ip)
@@ -319,7 +319,7 @@ def ipinfo_ip_check(ip):
 
 def ipvoid_check(ip):
     """Checks IPVoid.com for info on an IP address"""
-    if not is_IPv4Address(ip):
+    if not is_ipv4(ip):
         return None
 
     return_dict = dict()
@@ -343,7 +343,7 @@ def ipvoid_check(ip):
 
 def urlvoid_check(name):
     """Checks URLVoid.com for info on a domain"""
-    if not is_DNS(name):
+    if not is_fqdn(name):
         return None
 
     return_dict = dict()
@@ -365,7 +365,7 @@ def urlvoid_check(name):
 
 def urlvoid_ip_check(ip):
     """Checks URLVoid.com for info on an IP address"""
-    if not is_IPv4Address(ip):
+    if not is_ipv4(ip):
         return None
 
     return_dict = dict()
@@ -393,7 +393,7 @@ def urlvoid_ip_check(ip):
 def pt_check(addr, pt_api):
     """Check PassiveTotal for info on an IP address or name"""
     # TODO: Replace with is_ipv4() and is_dns()
-    if is_IPv4Address(addr) or is_DNS(addr):
+    if is_ipv4(addr) or is_fqdn(addr):
         pt = PassiveTotal(pt_api)
         results = pt.search(addr)
         if results['success']:
