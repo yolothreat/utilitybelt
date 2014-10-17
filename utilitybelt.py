@@ -62,6 +62,8 @@ whitelist = [{'net': IPNetwork('10.0.0.0/8'), 'org': 'Private per RFC 1918'},
              {'net': IPNetwork('240.0.0.0/4'), 'org': 'Reserved per RFC 1700'},
              {'net': IPNetwork('255.255.255.255/32'), 'org': 'Broadcast address per RFC 919'}]
 
+useragent = 'Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'
+
 
 def ip_to_long(ip):
     """Convert an IPv4Address string to long"""
@@ -236,7 +238,7 @@ def he_ip_check(ip):
         return None
 
     url = 'http://bgp.he.net/ip/%s#_dns' % ip
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36'}
+    headers = {'User-Agent': useragent}
     response = requests.get(url, headers=headers)
     if response.text:
         # TODO: use BeautifulSoup
@@ -253,7 +255,7 @@ def he_name_check(domain):
         return None
 
     url = 'http://bgp.he.net/dns/%s#_whois' % domain
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.2 Safari/537.36'}
+    headers = {'User-Agent': useragent}
     response = requests.get(url, headers=headers)
     if response.text:
         # TODO: use BeautifulSoup
@@ -271,7 +273,7 @@ def isc_ip_check(ip):
 
     try:
         url = 'https://isc.sans.edu/api/ip/%s?json' % ip
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'}
+        headers = {'User-Agent': useragent}
         response = requests.get(url, headers=headers)
         data = response.json()
         return {'count': data['count']['text'],
