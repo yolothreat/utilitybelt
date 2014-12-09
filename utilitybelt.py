@@ -112,7 +112,7 @@ def is_reserved(ip):
 def is_IPv4Address(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
 
-    return re.match(re_ipv4, ipv4address)
+    return bool(re.match(re_ipv4, ipv4address))
 
 
 def ip_to_geo(ipaddress):
