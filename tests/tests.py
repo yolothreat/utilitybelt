@@ -66,5 +66,23 @@ class TestUB(unittest.TestCase):
         self.assertFalse(ub.is_rfc1918("172.15.10.10"))
         self.assertFalse(ub.is_rfc1918("192.30.252.130"))
 
+    def test_is_reserved(self):
+        self.assertIsInstance(ub.is_reserved("10.10.10.10"), bool)
+        self.assertTrue(ub.is_reserved("0.0.1.1"))
+        self.assertTrue(ub.is_reserved("10.100.100.100"))
+        self.assertTrue(ub.is_reserved("100.90.200.200"))
+        self.assertTrue(ub.is_reserved("127.50.50.1"))
+        self.assertTrue(ub.is_reserved("192.0.0.50"))
+        self.assertTrue(ub.is_reserved("192.0.2.50"))
+        self.assertTrue(ub.is_reserved("192.88.99.50"))
+        self.assertTrue(ub.is_reserved("192.168.50.50"))
+        self.assertTrue(ub.is_reserved("198.18.50.50"))
+        self.assertTrue(ub.is_reserved("198.51.100.50"))
+        self.assertTrue(ub.is_reserved("203.0.113.50"))
+        self.assertTrue(ub.is_reserved("224.50.50.50"))
+        self.assertFalse(ub.is_reserved("3.0.0.0"))
+        self.assertFalse(ub.is_reserved("8.8.4.4"))
+        self.assertFalse(ub.is_reserved("192.30.252.131"))
+
 if __name__ == '__main__':
     unittest.main()
