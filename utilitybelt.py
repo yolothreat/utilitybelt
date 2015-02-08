@@ -27,7 +27,7 @@ gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 re_ipv4 = re.compile('(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)', re.I | re.S | re.M)
 re_email = re.compile("\\b[A-Za-z0-9_.]+@[0-9a-z.-]+\\b", re.I | re.S | re.M)
 re_fqdn = re.compile('(?=^.{4,255}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)', re.I | re.S | re.M)
-re_cve = re.compile("(CVE-(19|20)\\d{2}-\\d{4})", re.I | re.S | re.M)
+re_cve = re.compile("(CVE-(19|20)\\d{2}-\\d{4,7})", re.I | re.S | re.M)
 
 # Hashes
 re_md5 = re.compile("\\b[a-f0-9]{32}\\b", re.I | re.S | re.M)
@@ -97,11 +97,42 @@ def is_rfc1918(ip):
     else:
         return False
 
+def is_reserved(ip):
+    if ip_between (ip, "0.0.0.0", "0.255.255.255"):
+        return True
+    elif ip_between (ip, "10.0.0.0", "10.255.255.255"):
+        return True
+    elif ip_between (ip, "100.64.0.0", "100.127.255.255"):
+        return True
+    elif ip_between (ip, "127.0.0.0", "127.255.255.255"):
+        return True
+    elif ip_between (ip, "169.254.0.0", "169.254.255.255"):
+        return True
+    elif ip_between (ip, "172.16.0.0", "172.31.255.255"):
+        return True
+    elif ip_between (ip, "192.0.0.0", "192.0.0.255"):
+        return True
+    elif ip_between (ip, "192.0.2.0", "192.0.2.255"):
+        return True
+    elif ip_between (ip, "192.88.99.0", "192.88.99.255"):
+        return True
+    elif ip_between (ip, "192.168.0.0", "192.168.255.255"):
+        return True
+    elif ip_between (ip, "198.18.0.0", "198.19.255.255"):
+        return True
+    elif ip_between (ip, "198.51.100.0", "198.51.100.255"):
+        return True
+    elif ip_between (ip, "203.0.113.0", "203.0.113.255"):
+        return True
+    elif ip_between (ip, "224.0.0.0", "255.255.255.255"):
+        return True
+    else:
+        return False
 
 def is_ipv4(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
 
-    return re.match(re_ipv4, ipv4address)
+    return bool(re.match(re_ipv4, ipv4address))
 
 
 def is_fqdn(address):
