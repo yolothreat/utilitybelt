@@ -2,9 +2,9 @@ import sys
 import os
 import unittest
 
-sys.path.insert(0, os.path.dirname(".."))
+#sys.path.insert(0, os.path.dirname(".."))
 
-import utilitybelt as ub
+import utilitybelt.utilitybelt as ub
 
 
 class TestUB(unittest.TestCase):
