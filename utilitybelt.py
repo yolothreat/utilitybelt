@@ -18,7 +18,7 @@ import re
 import socket
 import struct
 
-gi = GeoIP.open("utilitybelt/data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
+gi = GeoIP.open("data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
 # Indicators
 re_ipv4 = re.compile("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", re.I | re.S | re.M)
