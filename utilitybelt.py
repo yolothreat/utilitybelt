@@ -8,7 +8,7 @@
                       __/ |
                      |___/
 
-A library to make you a Python CND Ba   tman
+A library to make you a Python CND Batman
 """
 
 import GeoIP
@@ -44,7 +44,6 @@ re_zip = '\W([\w-]+\.)(zip|zipx|7z|rar|tar|gz)'
 re_img = '\W([\w-]+\.)(jpeg|jpg|gif|png|tiff|bmp)'
 re_flash = '\W([\w-]+\.)(flv|swf)'
 
-# TODO: submit this upstream
 whitelist = [{'net': IPNetwork('10.0.0.0/8'), 'org': 'Private per RFC 1918'},
              {'net': IPNetwork('172.16.0.0/12'), 'org': 'Private per RFC 1918'},
              {'net': IPNetwork('192.168.0.0/16'), 'org': 'Private per RFC 1918'},
@@ -427,7 +426,6 @@ def urlvoid_ip_check(ip):
 
 def pt_check(addr, pt_api):
     """Check PassiveTotal for info on an IP address or name"""
-    # TODO: Replace with is_ipv4() and is_dns()
     if is_ipv4(addr) or is_fqdn(addr):
         pt = PassiveTotal(pt_api)
         results = pt.search(addr)
