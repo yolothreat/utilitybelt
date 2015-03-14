@@ -11,17 +11,17 @@
 A library to make you a Python CND Batman
 """
 
-import GeoIP
 import json
+import pygeoip
 import re
 import requests
 import socket
+import struct
 from PassiveTotal import PassiveTotal
 from bs4 import BeautifulSoup
 from netaddr import IPNetwork
-import struct
 
-gi = GeoIP.open("data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
+gi = pygeoip.GeoIP("data/GeoLiteCity.dat", pygeoip.const.GEOIP_STANDARD)
 
 # Indicators
 re_ipv4 = re.compile('(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)', re.I | re.S | re.M)

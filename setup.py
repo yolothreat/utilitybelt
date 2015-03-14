@@ -9,5 +9,5 @@ setup(
     license="MIT",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['requests', 'GeoIP', 'netaddr', 'BeautifulSoup4']
+    install_requires=['requests', 'pygeoip', 'netaddr', 'BeautifulSoup4']
 )
