@@ -13,12 +13,12 @@ A library to make you a Python CND Batman
 
 import GeoIP
 import json
-import netaddr
 import re
 import requests
 import socket
 from PassiveTotal import PassiveTotal
 from bs4 import BeautifulSoup
+from netaddr import IPNetwork
 import struct
 
 gi = GeoIP.open("data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)

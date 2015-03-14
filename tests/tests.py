@@ -11,12 +11,12 @@ class TestUB(unittest.TestCase):
         pass
 
     ## isA Tests
-    def test_is_IPv4Address(self):
-        self.assertIsInstance(ub.is_IPv4Address("8.8.4.4"), bool)
-        self.assertTrue(ub.is_IPv4Address("8.8.4.4"))
-        self.assertTrue(ub.is_IPv4Address("127.0.0.1"))
-        self.assertFalse(ub.is_IPv4Address("8.8.4"))
-        self.assertFalse(ub.is_IPv4Address("google.com"))
+    def test_is_ipv4(self):
+        self.assertIsInstance(ub.is_ipv4("8.8.4.4"), bool)
+        self.assertTrue(ub.is_ipv4("8.8.4.4"))
+        self.assertTrue(ub.is_ipv4("127.0.0.1"))
+        self.assertFalse(ub.is_ipv4("8.8.4"))
+        self.assertFalse(ub.is_ipv4("google.com"))
 
     ## Geolocation Tests
     def test_ip_to_geo(self):
