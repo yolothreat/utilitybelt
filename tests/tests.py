@@ -19,7 +19,7 @@ class TestUB(unittest.TestCase):
         self.assertFalse(ub.is_IPv4Address("google.com"))
 
     ## Geolocation Tests
-    def test_ip_to_geo(self):
+    def test_ip_to_geo(self)
         self.assertIsInstance(ub.ip_to_geo("192.30.252.130"), dict)
         self.assertEqual(ub.ip_to_geo("192.30.252.130")["city"], 'San Francisco')
         self.assertEqual(ub.ip_to_geo("192.30.252.130")["region_name"], 'California')
