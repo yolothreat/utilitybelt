@@ -8,14 +8,15 @@
                       __/ |
                      |___/
 
-A library to make you a Python CND Ba   tman
+A library to make you a Python CND Batman
 """
 
-import pygeoip
-import requests
 import re
 import socket
 import struct
+
+import pygeoip
+import requests
 
 gi = pygeoip.GeoIP("data/GeoLiteCity.dat", pygeoip.MEMORY_CACHE)
 
