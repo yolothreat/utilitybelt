@@ -1,2 +1,3 @@
-pygeoip
-requests
+pygeoip==0.3.2
+pytest>=2.7.0
+requests>=2.6.0
