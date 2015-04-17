@@ -22,7 +22,7 @@ class TestUB(unittest.TestCase):
     def test_ip_to_geo(self):
         self.assertIsInstance(ub.ip_to_geo("192.30.252.130"), dict)
         self.assertEqual(ub.ip_to_geo("192.30.252.130")["city"], 'San Francisco')
-        self.assertEqual(ub.ip_to_geo("192.30.252.130")["region_name"], 'California')
+        self.assertEqual(ub.ip_to_geo("192.30.252.130")["region_code"], 'CA')
         self.assertEqual(ub.ip_to_geo("192.30.252.130")["country_name"], 'United States')
 
     def test_domain_to_geo(self):
