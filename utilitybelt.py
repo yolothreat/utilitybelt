@@ -13,7 +13,6 @@ A library to make you a Python CND Ba   tman
 
 import pygeoip
 import requests
-import json
 import re
 import socket
 import struct
@@ -198,7 +197,6 @@ def reverse_dns_sna(ipaddress):
         return names
     else:
         raise Exception("No PTR record for %s" % ipaddress)
-        return ""
 
 
 def reverse_dns(ipaddress):
