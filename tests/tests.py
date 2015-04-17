@@ -41,11 +41,11 @@ class TestUB(unittest.TestCase):
         self.assertNotEqual(ub.reverse_dns("192.30.252.130"), [])
 
     def test_reverse_dns_sna(self):
-        self.assertIsInstance(ub.reverse_dns("192.30.252.130"), list)
-        self.assertEqual(ub.reverse_dns("192.30.252.130"), ['github.com'])
-        self.assertNotEqual(ub.reverse_dns("192.30.252.130"), ['google.com'])
-        self.assertNotEqual(ub.reverse_dns("192.30.252.130"), 'github.com')
-        self.assertNotEqual(ub.reverse_dns("192.30.252.130"), [])
+        self.assertIsInstance(ub.reverse_dns_sna("192.30.252.130"), list)
+        self.assertEqual(ub.reverse_dns_sna("192.30.252.130"), ['github.com'])
+        self.assertNotEqual(ub.reverse_dns_sna("192.30.252.130"), ['google.com'])
+        self.assertNotEqual(ub.reverse_dns_sna("192.30.252.130"), 'github.com')
+        self.assertNotEqual(ub.reverse_dns_sna("192.30.252.130"), [])
 
     def test_ip_to_long(self):
         self.assertIsInstance(ub.ip_to_long("192.30.252.130"), int)
