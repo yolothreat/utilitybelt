@@ -11,14 +11,14 @@
 A library to make you a Python CND Ba   tman
 """
 
-import GeoIP
+import pygeoip
 import requests
 import json
 import re
 import socket
 import struct
 
-gi = GeoIP.open("data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
+gi = pygeoip.open("data/GeoLiteCity.dat", pygeoip.GEOIP_STANDARD)
 
 # Indicators
 re_ipv4 = re.compile("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", re.I | re.S | re.M)
@@ -40,9 +40,6 @@ re_exe = '\W([\w-]+\.)(exe|dll|jar)'
 re_zip = '\W([\w-]+\.)(zip|zipx|7z|rar|tar|gz)'
 re_img = '\W([\w-]+\.)(jpeg|jpg|gif|png|tiff|bmp)'
 re_flash = '\W([\w-]+\.)(flv|swf)'
-
-
-gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
 
 def ip_to_long(ip):
