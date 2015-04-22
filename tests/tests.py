@@ -52,6 +52,7 @@ class TestUB(unittest.TestCase):
         self.assertNotEqual(ub.reverse_dns_sna("192.30.252.130"), ['google.com'])
         self.assertNotEqual(ub.reverse_dns_sna("192.30.252.130"), 'github.com')
         self.assertNotEqual(ub.reverse_dns_sna("192.30.252.130"), [])
+        self.assertIsNone(ub.reverse_dns_sna('192.0.0.50'))
 
     def test_ip_to_long(self):
         self.assertIsInstance(ub.ip_to_long("192.30.252.130"), int)

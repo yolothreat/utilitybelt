@@ -224,8 +224,9 @@ def reverse_dns_sna(ipaddress):
             names.append(name)
 
         return names
-    else:
-        raise Exception("No PTR record for %s" % ipaddress)
+    elif r.json()['code'] == 503:
+        # NXDOMAIN - no PTR record
+        return None
 
 
 def reverse_dns(ipaddress):
