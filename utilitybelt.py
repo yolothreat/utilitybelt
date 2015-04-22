@@ -13,12 +13,13 @@ A library to make you a Python CND Batman
 
 import re
 import socket
-import struct
 
 import pygeoip
 import requests
 from bs4 import BeautifulSoup
+from netaddr import IPAddress
 from netaddr import IPNetwork
+from netaddr import IPRange
 from PassiveTotal import PassiveTotal
 
 gi = pygeoip.GeoIP("data/GeoLiteCity.dat", pygeoip.MEMORY_CACHE)
@@ -67,22 +68,14 @@ useragent = 'Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'
 
 def ip_to_long(ip):
     """Convert an IPv4Address string to long"""
-    packedIP = socket.inet_aton(ip)
-    return struct.unpack("!L", packedIP)[0]
+    return int(IPAddress(ip))
 
 
 def ip_between(ip, start, finish):
     """Checks to see if IP is between start and finish"""
 
     if is_IPv4Address(ip) and is_IPv4Address(start) and is_IPv4Address(finish):
-        ip_long = ip_to_long(ip)
-        start_long = ip_to_long(start)
-        finish_long = ip_to_long(finish)
-
-        if start_long <= ip_long <= finish_long:
-            return True
-        else:
-            return False
+        return IPAddress(ip) in IPRange(start, finish)
     else:
         return False
 
@@ -134,6 +127,7 @@ def is_reserved(ip):
 def is_IPv4Address(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
 
+    # alternately: catch AddrConversionError from IPAddress(ipv4address).ipv4()
     return bool(re.match(re_ipv4, ipv4address))
 
 
