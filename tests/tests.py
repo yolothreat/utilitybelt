@@ -125,6 +125,14 @@ class TestUB(unittest.TestCase):
         self.assertIsInstance(tor_data, dict)
         self.assertIn('ProjectHoneypot', tor_data)
 
+    def test_urlvoid_check(self):
+        self.assertIsNone(ub.urlvoid_check('asdf'))
+        com_data = ub.urlvoid_check('github.com')
+        self.assertIsInstance(com_data, dict)
+        self.assertIn('SCUMWARE', com_data)
+        io_data = ub.urlvoid_check('github.io')
+        self.assertIsNone(io_data)
+
     def test_urlvoid_ip_check(self):
         self.assertIsNone(ub.urlvoid_ip_check('asdf'))
         data = ub.urlvoid_ip_check('8.8.8.8')
