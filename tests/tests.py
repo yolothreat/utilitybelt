@@ -144,6 +144,7 @@ class TestUB(unittest.TestCase):
 
     def test_urlvoid_ip_check(self):
         self.assertIsNone(ub.urlvoid_ip_check('asdf'))
+        self.assertIsNone(ub.urlvoid_ip_check('166.216.157.95'))
         data = ub.urlvoid_ip_check('8.8.8.8')
         self.assertIn('google-public-dns-a.google.com', data['other_names'])
         self.assertIn('androidbia.info', data['bad_names'])
