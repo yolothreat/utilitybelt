@@ -30,7 +30,10 @@ class TestUB(unittest.TestCase):
         self.assertEqual(ub.ip_to_geo("192.30.252.130")["country_name"], 'United States')
 
     def test_domain_to_geo(self):
-        pass
+        self.assertIsInstance(ub.domain_to_geo("github.com"), dict)
+        self.assertEqual(ub.domain_to_geo("github.com")["city"], 'San Francisco')
+        self.assertEqual(ub.domain_to_geo("github.com")["region_code"], 'CA')
+        self.assertEqual(ub.domain_to_geo("github.com")["country_name"], 'United States')
 
     def test_ip_to_geojson(self):
         self.assertIsInstance(ub.ip_to_geojson("192.30.252.130"), dict)
