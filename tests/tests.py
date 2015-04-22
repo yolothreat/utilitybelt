@@ -116,5 +116,14 @@ class TestUB(unittest.TestCase):
                 is_gh = True
         self.assertTrue(is_gh)
 
+    def test_ipvoid(self):
+        self.assertIsNone(ub.ipvoid_check('asdf'))
+        good_ip = '192.30.252.130'
+        bad_ip = '178.217.187.39'  # tor exit node, not really "bad"
+        self.assertIsNone(ub.ipvoid_check(good_ip))
+        tor_data = ub.ipvoid_check(bad_ip)
+        self.assertIsInstance(tor_data, dict)
+        self.assertIn('ProjectHoneypot', tor_data)
+
 if __name__ == '__main__':
     unittest.main()
