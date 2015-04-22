@@ -1,13 +1,21 @@
-from setuptools import setup, find_packages
-
+from distutils.core import setup
 
 setup(
-    name="utilitybelt",
+    name="cnd-utilitybelt",
     version="0.1",
     description="Utilities to make you a CND Batman",
-    url="https://github.com/sroberts/utilitybelt",
+    url="https://github.com/yolothreat/utilitybelt",
     license="MIT",
-    packages=find_packages(),
     include_package_data=True,
-    install_requires=['requests', 'GeoIP', 'netaddr', 'BeautifulSoup4']
+    install_requires=['requests>=2.6.0',
+                      'pygeoip==0.3.2',
+                      'pytest>=2.6.0',
+                      'pytest-cov>=1.8.1',
+                      'coveralls>=0.5',
+                      'pre-commit>=0.4.4',
+                      'BeautifulSoup4>=4.3.2',
+                      'netaddr>=0.7.14'
+                      ],
+    package_dir={'utilitybelt': 'src'},
+    packages=['utilitybelt']
 )

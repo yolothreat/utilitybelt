@@ -11,23 +11,24 @@
 A library to make you a Python CND Batman
 """
 
-import GeoIP
-import json
 import re
-import requests
 import socket
-from PassiveTotal import PassiveTotal
-from bs4 import BeautifulSoup
-from netaddr import IPNetwork
 import struct
 
-gi = GeoIP.open("data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
+import pygeoip
+import requests
+from bs4 import BeautifulSoup
+from netaddr import IPNetwork
+from PassiveTotal import PassiveTotal
+
+gi = pygeoip.GeoIP("data/GeoLiteCity.dat", pygeoip.MEMORY_CACHE)
 
 # Indicators
 re_ipv4 = re.compile('(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)', re.I | re.S | re.M)
 re_email = re.compile("\\b[A-Za-z0-9_.]+@[0-9a-z.-]+\\b", re.I | re.S | re.M)
 re_fqdn = re.compile('(?=^.{4,255}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)', re.I | re.S | re.M)
 re_cve = re.compile("(CVE-(19|20)\\d{2}-\\d{4,7})", re.I | re.S | re.M)
+re_url = re.compile("http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", re.I | re.S | re.M)
 
 # Hashes
 re_md5 = re.compile("\\b[a-f0-9]{32}\\b", re.I | re.S | re.M)
@@ -142,6 +143,12 @@ def is_fqdn(address):
     return re.match(re_fqdn, address)
 
 
+def is_url(url):
+    """Returns true for valid URLs, false for invalid."""
+
+    return bool(re.match(re_url, url))
+
+
 def ip_to_geo(ipaddress):
     """Convert IP to Geographic Information"""
 
@@ -226,7 +233,6 @@ def reverse_dns_sna(ipaddress):
         return names
     else:
         raise Exception("No PTR record for %s" % ipaddress)
-        return ""
 
 
 def reverse_dns(ipaddress):
@@ -321,7 +327,6 @@ def pdns_ip_check(ip, dnsdb_api):
     if not is_ipv4(ip):
         return None
 
-    pdns_results = []
     url = 'https://api.dnsdb.info/lookup/rdata/ip/%s?limit=50' % ip
     headers = {'Accept': 'application/json', 'X-Api-Key': dnsdb_api}
 
@@ -331,10 +336,9 @@ def pdns_ip_check(ip, dnsdb_api):
 
 def pdns_name_check(name, dnsdb_api):
     """Checks Farsight passive DNS for information on a name"""
-    if not is_fqdn(ip):
+    if not is_fqdn(name):
         return None
 
-    pdns_results = []
     url = 'https://api.dnsdb.info/lookup/rrset/name/%s?limit=50' % name
     headers = {'Accept': 'application/json', 'X-Api-Key': dnsdb_api}
 
