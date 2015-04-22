@@ -302,9 +302,10 @@ def ipvoid_check(ip):
     if not is_IPv4Address(ip):
         return None
 
-    return_dict = dict()
+    return_dict = {}
+    headers = {'User-Agent': useragent}
     url = 'http://ipvoid.com/scan/%s/' % ip
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     data = BeautifulSoup(response.text)
     if data.findAll('span', attrs={'class': 'label label-success'}):
         return None
@@ -326,9 +327,10 @@ def urlvoid_check(name):
     if not is_fqdn(name):
         return None
 
-    return_dict = dict()
+    return_dict = {}
+    headers = {'User-Agent': useragent}
     url = 'http://urlvoid.com/scan/%s/' % name
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     data = BeautifulSoup(response.text)
     if data.findAll('div', attrs={'class': 'bs-callout bs-callout-info'}):
         return None
@@ -348,9 +350,10 @@ def urlvoid_ip_check(ip):
     if not is_IPv4Address(ip):
         return None
 
-    return_dict = dict()
+    return_dict = {}
+    headers = {'User-Agent': useragent}
     url = 'http://urlvoid.com/ip/%s/' % ip
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     data = BeautifulSoup(response.text)
     h1 = data.findAll('h1')[0].text
     if h1 == 'Report not found':
