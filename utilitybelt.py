@@ -8,23 +8,24 @@
                       __/ |
                      |___/
 
-A library to make you a Python CND Ba   tman
+A library to make you a Python CND Batman
 """
 
-import GeoIP
-import requests
-import json
 import re
 import socket
 import struct
 
-gi = GeoIP.open("data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
+import pygeoip
+import requests
+
+gi = pygeoip.GeoIP("data/GeoLiteCity.dat", pygeoip.MEMORY_CACHE)
 
 # Indicators
 re_ipv4 = re.compile("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", re.I | re.S | re.M)
 re_email = re.compile("\\b[A-Za-z0-9_.]+@[0-9a-z.-]+\\b", re.I | re.S | re.M)
 re_domain = re.compile("([a-z0-9-_]+\\.){1,4}(com|aero|am|asia|au|az|biz|br|ca|cat|cc|ch|co|coop|cx|de|edu|fr|gov|hk|info|int|ir|jobs|jp|kr|kz|me|mil|mobi|museum|name|net|nl|nr|org|post|pre|ru|tel|tk|travel|tw|ua|uk|uz|ws|xxx)", re.I | re.S | re.M)
 re_cve = re.compile("(CVE-(19|20)\\d{2}-\\d{4,7})", re.I | re.S | re.M)
+re_url = re.compile("http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", re.I | re.S | re.M)
 
 # Hashes
 re_md5 = re.compile("\\b[a-f0-9]{32}\\b", re.I | re.S | re.M)
@@ -40,9 +41,6 @@ re_exe = '\W([\w-]+\.)(exe|dll|jar)'
 re_zip = '\W([\w-]+\.)(zip|zipx|7z|rar|tar|gz)'
 re_img = '\W([\w-]+\.)(jpeg|jpg|gif|png|tiff|bmp)'
 re_flash = '\W([\w-]+\.)(flv|swf)'
-
-
-gi = GeoIP.open("./data/GeoLiteCity.dat", GeoIP.GEOIP_STANDARD)
 
 
 def ip_to_long(ip):
@@ -115,6 +113,12 @@ def is_IPv4Address(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
 
     return bool(re.match(re_ipv4, ipv4address))
+
+
+def is_url(url):
+    """Returns true for valid URLs, false for invalid."""
+
+    return bool(re.match(re_url, url))
 
 
 def ip_to_geo(ipaddress):
@@ -201,7 +205,6 @@ def reverse_dns_sna(ipaddress):
         return names
     else:
         raise Exception("No PTR record for %s" % ipaddress)
-        return ""
 
 
 def reverse_dns(ipaddress):
