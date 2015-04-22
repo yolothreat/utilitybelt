@@ -263,30 +263,6 @@ def vt_name_check(domain, vt_api):
         return None
 
 
-def pdns_ip_check(ip, dnsdb_api):
-    """Checks Farsight passive DNS for information on an IP address"""
-    if not is_IPv4Address(ip):
-        return None
-
-    url = 'https://api.dnsdb.info/lookup/rdata/ip/%s?limit=50' % ip
-    headers = {'Accept': 'application/json', 'X-Api-Key': dnsdb_api}
-
-    response = requests.get(url, headers=headers)
-    return response.json()
-
-
-def pdns_name_check(name, dnsdb_api):
-    """Checks Farsight passive DNS for information on a name"""
-    if not is_fqdn(name):
-        return None
-
-    url = 'https://api.dnsdb.info/lookup/rrset/name/%s?limit=50' % name
-    headers = {'Accept': 'application/json', 'X-Api-Key': dnsdb_api}
-
-    response = requests.get(url, headers=headers)
-    return response.json()
-
-
 def ipinfo_ip_check(ip):
     """Checks ipinfo.io for basic WHOIS-type data on an IP address"""
     if not is_IPv4Address(ip):
