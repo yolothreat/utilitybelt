@@ -116,7 +116,7 @@ class TestUB(unittest.TestCase):
                 is_gh = True
         self.assertTrue(is_gh)
 
-    def test_ipvoid(self):
+    def test_ipvoid_check(self):
         self.assertIsNone(ub.ipvoid_check('asdf'))
         good_ip = '192.30.252.130'
         bad_ip = '178.217.187.39'  # tor exit node, not really "bad"
@@ -124,6 +124,13 @@ class TestUB(unittest.TestCase):
         tor_data = ub.ipvoid_check(bad_ip)
         self.assertIsInstance(tor_data, dict)
         self.assertIn('ProjectHoneypot', tor_data)
+
+    def test_urlvoid_ip_check(self):
+        self.assertIsNone(ub.urlvoid_ip_check('asdf'))
+        data = ub.urlvoid_ip_check('8.8.8.8')
+        self.assertIn('google-public-dns-a.google.com', data['other_names'])
+        self.assertIn('androidbia.info', data['bad_names'])
+
 
 if __name__ == '__main__':
     unittest.main()
