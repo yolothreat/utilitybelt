@@ -240,13 +240,10 @@ def vt_ip_check(ip, vt_api):
     if not is_IPv4Address(ip):
         return None
 
-    try:
-        url = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
-        parameters = {'ip': ip, 'apikey': vt_api}
-        response = requests.get(url, params=parameters)
-        return response.json()
-    except:
-        return None
+    url = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
+    parameters = {'ip': ip, 'apikey': vt_api}
+    response = requests.get(url, params=parameters)
+    return response.json()
 
 
 def vt_name_check(domain, vt_api):
@@ -254,13 +251,10 @@ def vt_name_check(domain, vt_api):
     if not is_fqdn(domain):
         return None
 
-    try:
-        url = 'https://www.virustotal.com/vtapi/v2/domain/report'
-        parameters = {'domain': domain, 'apikey': vt_api}
-        response = requests.get(url, params=parameters)
-        return response.json()
-    except:
-        return None
+    url = 'https://www.virustotal.com/vtapi/v2/domain/report'
+    parameters = {'domain': domain, 'apikey': vt_api}
+    response = requests.get(url, params=parameters)
+    return response.json()
 
 
 def ipinfo_ip_check(ip):
