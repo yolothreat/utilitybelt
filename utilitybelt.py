@@ -20,7 +20,6 @@ from bs4 import BeautifulSoup
 from netaddr import IPAddress
 from netaddr import IPNetwork
 from netaddr import IPRange
-from PassiveTotal import PassiveTotal
 
 gi = pygeoip.GeoIP("data/GeoLiteCity.dat", pygeoip.MEMORY_CACHE)
 
@@ -371,14 +370,3 @@ def urlvoid_ip_check(ip):
     if len(return_dict) == 0:
         return None
     return return_dict
-
-
-def pt_check(addr, pt_api):
-    """Check PassiveTotal for info on an IP address or name"""
-    if is_IPv4Address(addr) or is_fqdn(addr):
-        pt = PassiveTotal(pt_api)
-        results = pt.search(addr)
-        if results['success']:
-            return results['results']
-    else:
-        return None
