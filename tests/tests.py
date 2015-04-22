@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import utilitybelt as ub
@@ -88,6 +89,32 @@ class TestUB(unittest.TestCase):
         self.assertFalse(ub.is_reserved("3.0.0.0"))
         self.assertFalse(ub.is_reserved("8.8.4.4"))
         self.assertFalse(ub.is_reserved("192.30.252.131"))
+
+    def test_vt_ip_check(self):
+        vt_api = os.environ["VT_API"]
+        vt_ip_data = ub.vt_ip_check("192.30.252.130", vt_api)
+        self.assertIsInstance(vt_ip_data, dict)
+        self.assertIn('detected_urls', vt_ip_data)
+        self.assertIn('country', vt_ip_data)
+        self.assertEqual(vt_ip_data['country'], 'US')
+        self.assertIn('resolutions', vt_ip_data)
+        is_gh = False
+        for resolution in vt_ip_data['resolutions']:
+            if resolution['hostname'] == "github.com":
+                is_gh = True
+        self.assertTrue(is_gh)
+
+    def test_vt_name_check(self):
+        vt_api = os.environ["VT_API"]
+        vt_name_data = ub.vt_name_check("github.com", vt_api)
+        self.assertIsInstance(vt_name_data, dict)
+        self.assertIn('categories', vt_name_data)
+        self.assertIn('resolutions', vt_name_data)
+        is_gh = False
+        for resolution in vt_name_data['resolutions']:
+            if resolution['ip_address'] == '192.30.252.130':
+                is_gh = True
+        self.assertTrue(is_gh)
 
 if __name__ == '__main__':
     unittest.main()
