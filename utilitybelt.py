@@ -264,58 +264,6 @@ def vt_name_check(domain, vt_api):
         return None
 
 
-def he_ip_check(ip):
-    """Checks Hurricane Electric for DNS information on an IP address"""
-    if not is_IPv4Address(ip):
-        return None
-
-    url = 'http://bgp.he.net/ip/%s#_dns' % ip
-    headers = {'User-Agent': useragent}
-    response = requests.get(url, headers=headers)
-    if response.text:
-        # TODO: use BeautifulSoup
-        pattern = re.compile('\/dns\/.+\".title\=\".+\"\>(.+)<\/a\>', re.IGNORECASE)
-        hostnames = re.findall(pattern, response.text)
-        return hostnames
-    else:
-        return None
-
-
-def he_name_check(domain):
-    """Checks Hurricane Electric for DNS information on an IP address"""
-    if not is_fqdn(domain):
-        return None
-
-    url = 'http://bgp.he.net/dns/%s#_whois' % domain
-    headers = {'User-Agent': useragent}
-    response = requests.get(url, headers=headers)
-    if response.text:
-        # TODO: use BeautifulSoup
-        pattern = re.compile('\/dns\/.+\".title\=\".+\"\>(.+)<\/a\>', re.IGNORECASE)
-        hostnames = re.findall(pattern, response.text)
-        return hostnames
-    else:
-        return None
-
-
-def isc_ip_check(ip):
-    """Checks SANS ISC for attack data on an IP address"""
-    if not is_IPv4Address(ip):
-        return None
-
-    try:
-        url = 'https://isc.sans.edu/api/ip/%s?json' % ip
-        headers = {'User-Agent': useragent}
-        response = requests.get(url, headers=headers)
-        data = response.json()
-        return {'count': data['count']['text'],
-                'attacks': data['attacks']['text'],
-                'mindate': data['mindate']['text'],
-                'maxdate': data['maxdate']['text']}
-    except:
-        return None
-
-
 def pdns_ip_check(ip, dnsdb_api):
     """Checks Farsight passive DNS for information on an IP address"""
     if not is_IPv4Address(ip):
