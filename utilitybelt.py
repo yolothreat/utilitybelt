@@ -283,11 +283,7 @@ def ipvoid_check(ip):
             detect_site = each.parent.parent.td.text.lstrip()
             detect_url = each.parent.a['href']
             return_dict[detect_site] = detect_url
-    else:
-        return None
 
-    if len(return_dict) == 0:
-        return None
     return return_dict
 
 
@@ -309,8 +305,6 @@ def urlvoid_check(name):
             detect_url = each.parent.a['href']
             return_dict[detect_site] = detect_url
 
-    if len(return_dict) == 0:
-        return None
     return return_dict
 
 
@@ -334,9 +328,5 @@ def urlvoid_ip_check(ip):
             return_dict['bad_names'].append(each.parent.text.strip())
         for each in data.findAll('img', alt='Valid'):
             return_dict['other_names'].append(each.parent.text.strip())
-    else:
-        return None
 
-    if len(return_dict) == 0:
-        return None
     return return_dict
