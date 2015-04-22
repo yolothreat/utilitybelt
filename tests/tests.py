@@ -92,6 +92,7 @@ class TestUB(unittest.TestCase):
 
     def test_vt_ip_check(self):
         vt_api = os.environ["VT_API"]
+        self.assertIsNone(ub.vt_ip_check('asdf', vt_api))
         vt_ip_data = ub.vt_ip_check("192.30.252.130", vt_api)
         self.assertIsInstance(vt_ip_data, dict)
         self.assertIn('detected_urls', vt_ip_data)
@@ -106,6 +107,7 @@ class TestUB(unittest.TestCase):
 
     def test_vt_name_check(self):
         vt_api = os.environ["VT_API"]
+        self.assertIsNone(ub.vt_name_check('asdf', vt_api))
         vt_name_data = ub.vt_name_check("github.com", vt_api)
         self.assertIsInstance(vt_name_data, dict)
         self.assertIn('categories', vt_name_data)
@@ -115,6 +117,13 @@ class TestUB(unittest.TestCase):
             if resolution['ip_address'] == '192.30.252.130':
                 is_gh = True
         self.assertTrue(is_gh)
+
+    def test_ipinfo(self):
+        self.assertIsNone(ub.ipinfo_ip_check('asdf'))
+        data = ub.ipinfo_ip_check('8.8.8.8')
+        self.assertEqual(data['city'], 'Mountain View')
+        self.assertEqual(data['country'], 'US')
+        self.assertEqual(data['org'], 'AS15169 Google Inc.')
 
     def test_ipvoid_check(self):
         self.assertIsNone(ub.ipvoid_check('asdf'))
