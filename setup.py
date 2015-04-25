@@ -12,7 +12,9 @@ setup(
                       'pytest>=2.6.0',
                       'pytest-cov>=1.8.1',
                       'coveralls>=0.5',
-                      'pre-commit>=0.4.4'
+                      'pre-commit>=0.4.4',
+                      'BeautifulSoup4>=4.3.2',
+                      'netaddr>=0.7.14'
                       ],
     package_dir={'utilitybelt': 'src'},
     packages=['utilitybelt']

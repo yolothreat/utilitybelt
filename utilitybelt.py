@@ -13,17 +13,20 @@ A library to make you a Python CND Batman
 
 import re
 import socket
-import struct
 
 import pygeoip
 import requests
+from bs4 import BeautifulSoup
+from netaddr import IPAddress
+from netaddr import IPNetwork
+from netaddr import IPRange
 
 gi = pygeoip.GeoIP("data/GeoLiteCity.dat", pygeoip.MEMORY_CACHE)
 
 # Indicators
-re_ipv4 = re.compile("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", re.I | re.S | re.M)
+re_ipv4 = re.compile('(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)', re.I | re.S | re.M)
 re_email = re.compile("\\b[A-Za-z0-9_.]+@[0-9a-z.-]+\\b", re.I | re.S | re.M)
-re_domain = re.compile("([a-z0-9-_]+\\.){1,4}(com|aero|am|asia|au|az|biz|br|ca|cat|cc|ch|co|coop|cx|de|edu|fr|gov|hk|info|int|ir|jobs|jp|kr|kz|me|mil|mobi|museum|name|net|nl|nr|org|post|pre|ru|tel|tk|travel|tw|ua|uk|uz|ws|xxx)", re.I | re.S | re.M)
+re_fqdn = re.compile('(?=^.{4,255}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)', re.I | re.S | re.M)
 re_cve = re.compile("(CVE-(19|20)\\d{2}-\\d{4,7})", re.I | re.S | re.M)
 re_url = re.compile("http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", re.I | re.S | re.M)
 
@@ -42,25 +45,36 @@ re_zip = '\W([\w-]+\.)(zip|zipx|7z|rar|tar|gz)'
 re_img = '\W([\w-]+\.)(jpeg|jpg|gif|png|tiff|bmp)'
 re_flash = '\W([\w-]+\.)(flv|swf)'
 
+whitelist = [{'net': IPNetwork('10.0.0.0/8'), 'org': 'Private per RFC 1918'},
+             {'net': IPNetwork('172.16.0.0/12'), 'org': 'Private per RFC 1918'},
+             {'net': IPNetwork('192.168.0.0/16'), 'org': 'Private per RFC 1918'},
+             {'net': IPNetwork('0.0.0.0/8'), 'org': 'Invalid per RFC 1122'},
+             {'net': IPNetwork('127.0.0.0/8'), 'org': 'Loopback per RFC 1122'},
+             {'net': IPNetwork('169.254.0.0/16'), 'org': 'Link-local per RFC 3927'},
+             {'net': IPNetwork('100.64.0.0/10'), 'org': 'Shared address space per RFC 6598'},
+             {'net': IPNetwork('192.0.0.0/24'), 'org': 'IETF Protocol Assignments per RFC 6890'},
+             {'net': IPNetwork('192.0.2.0/24'), 'org': 'Documentation and examples per RFC 6890'},
+             {'net': IPNetwork('192.88.99.0/24'), 'org': 'IPv6 to IPv4 relay per RFC 3068'},
+             {'net': IPNetwork('198.18.0.0/15'), 'org': 'Network benchmark tests per RFC 2544'},
+             {'net': IPNetwork('198.51.100.0/24'), 'org': 'Documentation and examples per RFC 5737'},
+             {'net': IPNetwork('203.0.113.0/24'), 'org': 'Documentation and examples per RFC 5737'},
+             {'net': IPNetwork('224.0.0.0/4'), 'org': 'IP multicast per RFC 5771'},
+             {'net': IPNetwork('240.0.0.0/4'), 'org': 'Reserved per RFC 1700'},
+             {'net': IPNetwork('255.255.255.255/32'), 'org': 'Broadcast address per RFC 919'}]
+
+useragent = 'Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'
+
 
 def ip_to_long(ip):
     """Convert an IPv4Address string to long"""
-    packedIP = socket.inet_aton(ip)
-    return struct.unpack("!L", packedIP)[0]
+    return int(IPAddress(ip))
 
 
 def ip_between(ip, start, finish):
     """Checks to see if IP is between start and finish"""
 
     if is_IPv4Address(ip) and is_IPv4Address(start) and is_IPv4Address(finish):
-        ip_long = ip_to_long(ip)
-        start_long = ip_to_long(start)
-        finish_long = ip_to_long(finish)
-
-        if start_long <= ip_long <= finish_long:
-            return True
-        else:
-            return False
+        return IPAddress(ip) in IPRange(start, finish)
     else:
         return False
 
@@ -112,7 +126,14 @@ def is_reserved(ip):
 def is_IPv4Address(ipv4address):
     """Returns true for valid IPv4 Addresses, false for invalid."""
 
+    # alternately: catch AddrConversionError from IPAddress(ipv4address).ipv4()
     return bool(re.match(re_ipv4, ipv4address))
+
+
+def is_fqdn(address):
+    """Returns true for valid DNS addresses, false for invalid."""
+
+    return re.match(re_fqdn, address)
 
 
 def is_url(url):
@@ -203,12 +224,110 @@ def reverse_dns_sna(ipaddress):
             names.append(name)
 
         return names
-    else:
-        raise Exception("No PTR record for %s" % ipaddress)
+    elif r.json()['code'] == 503:
+        # NXDOMAIN - no PTR record
+        return None
 
 
 def reverse_dns(ipaddress):
     """Returns a list of the dns names that point to a given ipaddress"""
 
-    name, alias, addresslist = socket.gethostbyaddr(ipaddress)
+    name = socket.gethostbyaddr(ipaddress)[0]
     return [str(name)]
+
+
+def vt_ip_check(ip, vt_api):
+    """Checks VirusTotal for occurrences of an IP address"""
+    if not is_IPv4Address(ip):
+        return None
+
+    url = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
+    parameters = {'ip': ip, 'apikey': vt_api}
+    response = requests.get(url, params=parameters)
+    return response.json()
+
+
+def vt_name_check(domain, vt_api):
+    """Checks VirusTotal for occurrences of a domain name"""
+    if not is_fqdn(domain):
+        return None
+
+    url = 'https://www.virustotal.com/vtapi/v2/domain/report'
+    parameters = {'domain': domain, 'apikey': vt_api}
+    response = requests.get(url, params=parameters)
+    return response.json()
+
+
+def ipinfo_ip_check(ip):
+    """Checks ipinfo.io for basic WHOIS-type data on an IP address"""
+    if not is_IPv4Address(ip):
+        return None
+
+    response = requests.get('http://ipinfo.io/%s/json' % ip)
+    return response.json()
+
+
+def ipvoid_check(ip):
+    """Checks IPVoid.com for info on an IP address"""
+    if not is_IPv4Address(ip):
+        return None
+
+    return_dict = {}
+    headers = {'User-Agent': useragent}
+    url = 'http://ipvoid.com/scan/%s/' % ip
+    response = requests.get(url, headers=headers)
+    data = BeautifulSoup(response.text)
+    if data.findAll('span', attrs={'class': 'label label-success'}):
+        return None
+    elif data.findAll('span', attrs={'class': 'label label-danger'}):
+        for each in data.findAll('img', alt='Alert'):
+            detect_site = each.parent.parent.td.text.lstrip()
+            detect_url = each.parent.a['href']
+            return_dict[detect_site] = detect_url
+
+    return return_dict
+
+
+def urlvoid_check(name):
+    """Checks URLVoid.com for info on a domain"""
+    if not is_fqdn(name):
+        return None
+
+    return_dict = {}
+    headers = {'User-Agent': useragent}
+    url = 'http://urlvoid.com/scan/%s/' % name
+    response = requests.get(url, headers=headers)
+    data = BeautifulSoup(response.text)
+    if data.findAll('div', attrs={'class': 'bs-callout bs-callout-info'}):
+        return None
+    elif data.findAll('div', attrs={'class': 'bs-callout bs-callout-warning'}):
+        for each in data.findAll('img', alt='Alert'):
+            detect_site = each.parent.parent.td.text.lstrip()
+            detect_url = each.parent.a['href']
+            return_dict[detect_site] = detect_url
+
+    return return_dict
+
+
+def urlvoid_ip_check(ip):
+    """Checks URLVoid.com for info on an IP address"""
+    if not is_IPv4Address(ip):
+        return None
+
+    return_dict = {}
+    headers = {'User-Agent': useragent}
+    url = 'http://urlvoid.com/ip/%s/' % ip
+    response = requests.get(url, headers=headers)
+    data = BeautifulSoup(response.text)
+    h1 = data.findAll('h1')[0].text
+    if h1 == 'Report not found':
+        return None
+    elif re.match('^IP', h1):
+        return_dict['bad_names'] = []
+        return_dict['other_names'] = []
+        for each in data.findAll('img', alt='Alert'):
+            return_dict['bad_names'].append(each.parent.text.strip())
+        for each in data.findAll('img', alt='Valid'):
+            return_dict['other_names'].append(each.parent.text.strip())
+
+    return return_dict
