@@ -300,7 +300,7 @@ def urlvoid_check(name):
     data = BeautifulSoup(response.text)
     if data.findAll('div', attrs={'class': 'bs-callout bs-callout-info'}):
         return None
-    elif data.findAll('div', attrs={'class': 'bs-callout bs-callout-warning'}):
+    elif data.findAll('div', attrs={'class': 'bs-callout bs-callout-danger'}):
         for each in data.findAll('img', alt='Alert'):
             detect_site = each.parent.parent.td.text.lstrip()
             detect_url = each.parent.a['href']
