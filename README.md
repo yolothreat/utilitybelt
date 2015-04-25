@@ -1,5 +1,3 @@
-![travis-ci badge](https://travis-ci.org/yolothreat/utilitybelt.svg?branch=master)
-
 utilitybelt
 ===========
 
