@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name="cnd-utilitybelt",
     packages=['utilitybelt'],
-    version="0.2",
+    version="0.2.1",
     description="Utilities to make you a CND Batman",
     url="https://github.com/yolothreat/utilitybelt",
     license="MIT",
