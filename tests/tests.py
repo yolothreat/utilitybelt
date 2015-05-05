@@ -153,6 +153,12 @@ class TestUB(unittest.TestCase):
         self.assertIn('google-public-dns-a.google.com', data['other_names'])
         self.assertIn('androidbia.info', data['bad_names'])
 
+    def test_dshield_ip_check(self):
+        self.assertIsNone(ub.dshield_ip_check('asdf'))
+        self.assertIsInstance(ub.dshield_ip_check('166.216.157.95'), dict)
+        data = ub.dshield_ip_check('8.8.8.8')
+        self.assertIn('google', data['ip']['asname'].lower())
+
 
 if __name__ == '__main__':
     unittest.main()
