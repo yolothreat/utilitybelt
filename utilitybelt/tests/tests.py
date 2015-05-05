@@ -158,7 +158,3 @@ class TestUB(unittest.TestCase):
         self.assertIsInstance(ub.dshield_ip_check('166.216.157.95'), dict)
         data = ub.dshield_ip_check('8.8.8.8')
         self.assertIn('google', data['ip']['asname'].lower())
-
-
-if __name__ == '__main__':
-    unittest.main()
