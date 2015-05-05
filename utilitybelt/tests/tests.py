@@ -1,7 +1,7 @@
 import os
 import unittest
 
-import utilitybelt as ub
+from utilitybelt import utilitybelt as ub
 
 
 class TestUB(unittest.TestCase):
