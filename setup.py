@@ -2,6 +2,7 @@ from distutils.core import setup
 
 setup(
     name="cnd-utilitybelt",
+    packages=['utilitybelt'],
     version="0.2",
     description="Utilities to make you a CND Batman",
     url="https://github.com/yolothreat/utilitybelt",
@@ -23,6 +24,4 @@ setup(
                       'BeautifulSoup4>=4.3.2',
                       'netaddr>=0.7.14'
                       ],
-    package_dir={'utilitybelt': 'src'},
-    packages=['utilitybelt']
 )
