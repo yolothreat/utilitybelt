@@ -288,23 +288,14 @@ def ipvoid_check(ip):
     return return_dict
 
 
-def urlvoid_check(name):
+def urlvoid_check(name, api_key):
     """Checks URLVoid.com for info on a domain"""
     if not is_fqdn(name):
         return None
 
-    return_dict = {}
-    headers = {'User-Agent': useragent}
-    url = 'http://urlvoid.com/scan/%s/' % name
-    response = requests.get(url, headers=headers)
-    data = BeautifulSoup(response.text)
-    if data.findAll('div', attrs={'class': 'bs-callout bs-callout-info'}):
-        return None
-    elif data.findAll('div', attrs={'class': 'bs-callout bs-callout-danger'}):
-        for each in data.findAll('img', alt='Alert'):
-            detect_site = each.parent.parent.td.text.lstrip()
-            detect_url = each.parent.a['href']
-            return_dict[detect_site] = detect_url
+    url = 'http://api.urlvoid.com/api1000/{key}/host/{name}'.format(key=api_key, name=name)
+    response = requests.get(url)
+    return_dict = response.json()
 
     return return_dict
 
