@@ -13,6 +13,7 @@ A library to make you a Python CND Batman
 
 import re
 import socket
+import xml.etree.ElementTree as ET
 
 import pygeoip
 import requests
@@ -295,9 +296,11 @@ def urlvoid_check(name, api_key):
 
     url = 'http://api.urlvoid.com/api1000/{key}/host/{name}'.format(key=api_key, name=name)
     response = requests.get(url)
-    return_dict = response.json()
-
-    return return_dict
+    tree = ET.parse(response.text)
+    if tree.find('./detections/engines'):
+        return [e.text for e in tree.find('./detections/engines')]
+    else:
+        return None
 
 
 def urlvoid_ip_check(ip):
