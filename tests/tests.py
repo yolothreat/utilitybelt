@@ -17,6 +17,19 @@ class TestUB(unittest.TestCase):
         self.assertFalse(ub.is_IPv4Address("8.8.4"))
         self.assertFalse(ub.is_IPv4Address("google.com"))
 
+    def test_is_IPv6Address(self):
+        self.assertIsInstance(ub.is_IPv6Address("1:2:3:4:5:6:7:8"), bool)
+        self.assertTrue(ub.is_IPv6Address("1:2:3:4:5:6:7:8"))
+        self.assertTrue(ub.is_IPv6Address("::ffff:10.0.0.1"))
+        self.assertTrue(ub.is_IPv6Address("::ffff:1.2.3.4"))
+        self.assertTrue(ub.is_IPv6Address("::ffff:0.0.0.0"))
+        self.assertTrue(ub.is_IPv6Address("1:2:3:4:5:6:77:88"))
+        self.assertTrue(ub.is_IPv6Address("::ffff:255.255.255.255"))
+        self.assertTrue(ub.is_IPv6Address("fe08::7:8"))
+        self.assertTrue(ub.is_IPv6Address("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
+        self.assertFalse(ub.is_IPv6Address("google.com"))
+        self.assertFalse(ub.is_IPv6Address("8.8.4.4"))
+
     def test_is_url(self):
         self.assertIsInstance(ub.is_url("http://example.com"), bool)
         self.assertTrue(ub.is_url("http://example.com"))
