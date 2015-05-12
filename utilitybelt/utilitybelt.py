@@ -296,7 +296,7 @@ def urlvoid_check(name, api_key):
 
     url = 'http://api.urlvoid.com/api1000/{key}/host/{name}'.format(key=api_key, name=name)
     response = requests.get(url)
-    tree = ET.parse(response.text)
+    tree = ET.fromstring(response.text)
     if tree.find('./detections/engines'):
         return [e.text for e in tree.find('./detections/engines')]
     else:
