@@ -114,7 +114,6 @@ class TestUB(unittest.TestCase):
         self.assertIsNone(ub.vt_name_check('asdf', vt_api))
         vt_name_data = ub.vt_name_check("github.com", vt_api)
         self.assertIsInstance(vt_name_data, dict)
-        self.assertIn('categories', vt_name_data)
         self.assertIn('resolutions', vt_name_data)
         is_gh = False
         for resolution in vt_name_data['resolutions']:
