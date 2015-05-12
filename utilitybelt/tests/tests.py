@@ -141,7 +141,7 @@ class TestUB(unittest.TestCase):
         urlvoid_api = os.environ["URLVOID_API"]
         self.assertIsNone(ub.urlvoid_check('asdf', urlvoid_api))
         com_data = ub.urlvoid_check('github.com', urlvoid_api)
-        self.assertIsInstance(com_data, dict)
+        self.assertIsInstance(com_data, list)
         self.assertIn('SCUMWARE', com_data)
         io_data = ub.urlvoid_check('github.io', urlvoid_api)
         self.assertIsNone(io_data)
