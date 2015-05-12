@@ -348,3 +348,14 @@ def urlvoid_ip_check(ip):
             return_dict['other_names'].append(each.parent.text.strip())
 
     return return_dict
+
+
+def dshield_ip_check(ip):
+    """Checks dshield for info on an IP address"""
+    if not is_IPv4Address(ip):
+        return None
+
+    headers = {'User-Agent': useragent}
+    url = 'https://isc.sans.edu/api/ip/'
+    response = requests.get('{0}{1}?json'.format(url, ip), headers=headers)
+    return response.json()

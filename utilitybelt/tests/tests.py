@@ -1,7 +1,7 @@
 import os
 import unittest
 
-import utilitybelt as ub
+from utilitybelt import utilitybelt as ub
 
 
 class TestUB(unittest.TestCase):
@@ -166,6 +166,8 @@ class TestUB(unittest.TestCase):
         self.assertIn('google-public-dns-a.google.com', data['other_names'])
         self.assertIn('androidbia.info', data['bad_names'])
 
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_dshield_ip_check(self):
+        self.assertIsNone(ub.dshield_ip_check('asdf'))
+        self.assertIsInstance(ub.dshield_ip_check('166.216.157.95'), dict)
+        data = ub.dshield_ip_check('8.8.8.8')
+        self.assertIn('google', data['ip']['asname'].lower())
