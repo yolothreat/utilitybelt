@@ -96,11 +96,17 @@ class TestUB(unittest.TestCase):
         self.assertFalse(ub.is_reserved("192.30.252.131"))
 
     def test_is_hash(self):
-        self.assertIsInstance(ub.is_hash("9194effb4b96f6dd8d0ebe0e60c1ac1b32c5c349590ac1c9618c636d2297cc32"), bool)
-        self.assertTrue(ub.is_hash("9194effb4b96f6dd8d0ebe0e60c1ac1b32c5c349590ac1c9618c636d2297cc32"))
-        self.assertTrue(ub.is_hash("fe03b4181707f1ea1f3c69dc0a9904181c6fce91"))
-        self.assertTrue(ub.is_hash("ec4208a279ce1ce43426969d27cfc28c"))
-        self.assertFalse(ub.is_hash("kilroywashere"))
+        # all hashes of the empty string
+        self.assertIsInstance(ub.is_hash("d41d8cd98f00b204e9800998ecf8427e"), bool)
+        # MD5
+        self.assertTrue(ub.is_hash("d41d8cd98f00b204e9800998ecf8427e"))
+        # SHA1
+        self.assertTrue(ub.is_hash("da39a3ee5e6b4b0d3255bfef95601890afd80709"))
+        # SHA256
+        self.assertTrue(ub.is_hash("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"))
+        # SHA512
+        self.assertTrue(ub.is_hash("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"))
+        self.assertFalse(ub.is_hash("KilroyWasHere"))
 
     def test_vt_ip_check(self):
         vt_api = os.environ["VT_API"]
