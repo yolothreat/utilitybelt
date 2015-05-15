@@ -1,4 +1,5 @@
 import os
+import time
 import unittest
 
 from utilitybelt import utilitybelt as ub
@@ -108,6 +109,7 @@ class TestUB(unittest.TestCase):
             if resolution['hostname'] == "github.com":
                 is_gh = True
         self.assertTrue(is_gh)
+        time.sleep(15)  # VT rate limiting
 
     def test_vt_name_check(self):
         vt_api = os.environ["VT_API"]
@@ -120,12 +122,14 @@ class TestUB(unittest.TestCase):
             if resolution['ip_address'] == '192.30.252.130':
                 is_gh = True
         self.assertTrue(is_gh)
+        time.sleep(15)  # VT rate limiting
 
     def test_vt_hash_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_hash_check('asdf', vt_api))
-        vt_hash_data = ub.vt_hash_check("fe03b4181707f1ea1f3c69dc0a9904181c6fce91")
+        vt_hash_data = ub.vt_hash_check("fe03b4181707f1ea1f3c69dc0a9904181c6fce91", vt_api)
         self.assertIsInstance(vt_hash_data, dict)
+        time.sleep(15)  # VT rate limiting
 
     def test_ipinfo(self):
         self.assertIsNone(ub.ipinfo_ip_check('asdf'))
