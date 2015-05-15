@@ -13,6 +13,7 @@ A library to make you a Python CND Batman
 
 import re
 import socket
+import xml.etree.ElementTree as ET
 
 import pygeoip
 import requests
@@ -288,25 +289,18 @@ def ipvoid_check(ip):
     return return_dict
 
 
-def urlvoid_check(name):
+def urlvoid_check(name, api_key):
     """Checks URLVoid.com for info on a domain"""
     if not is_fqdn(name):
         return None
 
-    return_dict = {}
-    headers = {'User-Agent': useragent}
-    url = 'http://urlvoid.com/scan/%s/' % name
-    response = requests.get(url, headers=headers)
-    data = BeautifulSoup(response.text)
-    if data.findAll('div', attrs={'class': 'bs-callout bs-callout-info'}):
+    url = 'http://api.urlvoid.com/api1000/{key}/host/{name}'.format(key=api_key, name=name)
+    response = requests.get(url)
+    tree = ET.fromstring(response.text)
+    if tree.find('./detections/engines'):
+        return [e.text for e in tree.find('./detections/engines')]
+    else:
         return None
-    elif data.findAll('div', attrs={'class': 'bs-callout bs-callout-danger'}):
-        for each in data.findAll('img', alt='Alert'):
-            detect_site = each.parent.parent.td.text.lstrip()
-            detect_url = each.parent.a['href']
-            return_dict[detect_site] = detect_url
-
-    return return_dict
 
 
 def urlvoid_ip_check(ip):
