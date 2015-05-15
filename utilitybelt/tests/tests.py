@@ -121,6 +121,12 @@ class TestUB(unittest.TestCase):
                 is_gh = True
         self.assertTrue(is_gh)
 
+    def test_vt_hash_check(self):
+        vt_api = os.environ["VT_API"]
+        self.assertIsNone(ub.vt_hash_check('asdf', vt_api))
+        vt_hash_data = ub.vt_hash_check("fe03b4181707f1ea1f3c69dc0a9904181c6fce91")
+        self.assertIsInstance(vt_hash_data, dict)
+
     def test_ipinfo(self):
         self.assertIsNone(ub.ipinfo_ip_check('asdf'))
         data = ub.ipinfo_ip_check('8.8.8.8')
