@@ -153,6 +153,18 @@ class TestUB(unittest.TestCase):
         self.assertEqual(vt_hash_data['positives'], 0)
         time.sleep(15)  # VT rate limiting
 
+    def test_vt_rate_limiting(self):
+        vt_api = os.environ["VT_API"]
+        # Exceed 4x in 60 seconds
+        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        self.assertIsInstance(vt_hash_data, dict)
+        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        self.assertIsNone(vt_hash_data)
+        time.sleep(15)
+
     def test_ipinfo(self):
         self.assertIsNone(ub.ipinfo_ip_check('asdf'))
         data = ub.ipinfo_ip_check('8.8.8.8')
