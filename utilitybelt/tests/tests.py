@@ -107,7 +107,7 @@ class TestUB(unittest.TestCase):
         # SHA512
         self.assertTrue(ub.is_hash("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"))
         # ssdeep
-        self.assertTrue(ub.is_hash("EQOJvOl4ab3hhiNFXc4wwcweomr0cNJDBoqXjmAHKX8dEt001nfEhVIuX0dDcs:3mzpAsZpprbshfu3oujjdENdp21"))
+        self.assertTrue(ub.is_hash("96:EQOJvOl4ab3hhiNFXc4wwcweomr0cNJDBoqXjmAHKX8dEt001nfEhVIuX0dDcs:3mzpAsZpprbshfu3oujjdENdp21"))
         self.assertFalse(ub.is_hash("KilroyWasHere"))
 
     def test_vt_ip_check(self):
