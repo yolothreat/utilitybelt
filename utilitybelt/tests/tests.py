@@ -95,6 +95,13 @@ class TestUB(unittest.TestCase):
         self.assertFalse(ub.is_reserved("8.8.4.4"))
         self.assertFalse(ub.is_reserved("192.30.252.131"))
 
+    def test_is_hash(self):
+        self.assertIsInstance(ub.is_hash("9194effb4b96f6dd8d0ebe0e60c1ac1b32c5c349590ac1c9618c636d2297cc32"), bool)
+        self.assertTrue(ub.is_hash("9194effb4b96f6dd8d0ebe0e60c1ac1b32c5c349590ac1c9618c636d2297cc32"))
+        self.assertTrue(ub.is_hash("fe03b4181707f1ea1f3c69dc0a9904181c6fce91"))
+        self.assertTrue(ub.is_hash("ec4208a279ce1ce43426969d27cfc28c"))
+        self.assertFalse(ub.is_hash("kilroywashere"))
+
     def test_vt_ip_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_ip_check('asdf', vt_api))
@@ -129,6 +136,13 @@ class TestUB(unittest.TestCase):
         self.assertIsNone(ub.vt_hash_check('asdf', vt_api))
         vt_hash_data = ub.vt_hash_check("fe03b4181707f1ea1f3c69dc0a9904181c6fce91", vt_api)
         self.assertIsInstance(vt_hash_data, dict)
+        self.assertIn('resource', vt_hash_data)
+        self.assertIn('positives', vt_hash_data)
+        self.assertGreater(vt_hash_data['positives'], 0)
+        time.sleep(15)  # VT rate limiting
+        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        self.assertIn('positives', vt_hash_data)
+        self.assertEqual(vt_hash_data['positives'], 0)
         time.sleep(15)  # VT rate limiting
 
     def test_ipinfo(self):
