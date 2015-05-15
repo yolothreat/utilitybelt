@@ -156,13 +156,17 @@ class TestUB(unittest.TestCase):
     def test_vt_rate_limiting(self):
         vt_api = os.environ["VT_API"]
         # Exceed 4x in 60 seconds
-        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
-        self.assertIsInstance(vt_hash_data, dict)
-        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
-        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
-        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
-        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
-        self.assertIsNone(vt_hash_data)
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        self.assertIsInstance(data, dict)
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        data = ub.vt_name_check("example.org", vt_api)
+        self.assertIsNone(data)
+        data = ub.vt_ip_check("192.30.252.130", vt_api)
+        self.assertIsNone(data)
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        self.assertIsNone(data)
         time.sleep(15)
 
     def test_ipinfo(self):
