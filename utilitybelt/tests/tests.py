@@ -14,6 +14,7 @@ class TestUB(unittest.TestCase):
         self.assertIsInstance(ub.is_IPv4Address("8.8.4.4"), bool)
         self.assertTrue(ub.is_IPv4Address("8.8.4.4"))
         self.assertTrue(ub.is_IPv4Address("127.0.0.1"))
+        self.assertFalse(ub.is_IPv4Address("256.1.1.1"))
         self.assertFalse(ub.is_IPv4Address("8.8.4"))
         self.assertFalse(ub.is_IPv4Address("google.com"))
 
