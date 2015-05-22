@@ -94,7 +94,7 @@ class TestUB(unittest.TestCase):
         self.assertFalse(ub.is_reserved("8.8.4.4"))
         self.assertFalse(ub.is_reserved("192.30.252.131"))
 
-    @unittest.skipIf(os.getenv("VT_API", True), "No VT_API set")
+    @unittest.skipIf(os.getenv("VT_API", None) == None, "No VT_API set")
     def test_vt_ip_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_ip_check('asdf', vt_api))
@@ -110,7 +110,7 @@ class TestUB(unittest.TestCase):
                 is_gh = True
         self.assertTrue(is_gh)
 
-    @unittest.skipIf(os.getenv("VT_API", True), "No VT_API set")
+    @unittest.skipIf(os.getenv("VT_API", None) == None, "No VT_API set")
     def test_vt_name_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_name_check('asdf', vt_api))
@@ -139,7 +139,7 @@ class TestUB(unittest.TestCase):
         self.assertIsInstance(tor_data, dict)
         self.assertIn('ProjectHoneypot', tor_data)
 
-    @unittest.skipIf(os.getenv("URLVOID_API", True), "No URLVOID_API set")
+    @unittest.skipIf(os.getenv("URLVOID_API", None) == None, "No URLVOID_API set")
     def test_urlvoid_check(self):
         urlvoid_api = os.environ["URLVOID_API"]
         self.assertIsNone(ub.urlvoid_check('asdf', urlvoid_api))
