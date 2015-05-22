@@ -57,6 +57,7 @@ venv
 
 ## Data
 data/*
+*.json
 
 # swap files
 *.swp
