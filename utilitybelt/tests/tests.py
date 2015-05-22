@@ -139,7 +139,7 @@ class TestUB(unittest.TestCase):
         self.assertIsInstance(tor_data, dict)
         self.assertIn('ProjectHoneypot', tor_data)
 
-    @unittest.skipIf(os.getenv("URLVOID_API", True), "No VT_API set")
+    @unittest.skipIf(os.getenv("URLVOID_API", True), "No URLVOID_API set")
     def test_urlvoid_check(self):
         urlvoid_api = os.environ["URLVOID_API"]
         self.assertIsNone(ub.urlvoid_check('asdf', urlvoid_api))
