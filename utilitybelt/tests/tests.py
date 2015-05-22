@@ -36,6 +36,14 @@ class TestUB(unittest.TestCase):
         self.assertTrue(ub.is_url("http://example.com"))
         self.assertFalse(ub.is_url("example.com"))
 
+    def test_is_fqdn(self):
+        proper = ub.is_fqdn("www.heroku.com")
+        improper = ub.is_fqdn("heroku")
+        self.assertIsInstance(proper, bool)
+        self.assertTrue(proper)
+        self.assertIsInstance(improper, bool)
+        self.assertFalse(improper)
+
     # Geolocation Tests
     def test_ip_to_geo(self):
         self.assertIsInstance(ub.ip_to_geo("192.30.252.130"), dict)
