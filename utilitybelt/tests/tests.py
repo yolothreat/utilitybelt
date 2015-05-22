@@ -123,7 +123,7 @@ class TestUB(unittest.TestCase):
         self.assertTrue(ub.is_hash("96:EQOJvOl4ab3hhiNFXc4wwcweomr0cNJDBoqXjmAHKX8dEt001nfEhVIuX0dDcs:3mzpAsZpprbshfu3oujjdENdp21"))
         self.assertFalse(ub.is_hash("KilroyWasHere"))
 
-    @unittest.skipIf(os.getenv("VT_API", True), "No VT_API set")
+    @unittest.skipIf(os.getenv("VT_API"), "No VT_API set")
     def test_vt_ip_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_ip_check('asdf', vt_api))
@@ -140,7 +140,7 @@ class TestUB(unittest.TestCase):
         self.assertTrue(is_gh)
         time.sleep(15)  # VT rate limiting
 
-    @unittest.skipIf(os.getenv("VT_API", True), "No VT_API set")
+    @unittest.skipUnless(os.getenv("VT_API"), "No VT_API set")
     def test_vt_name_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_name_check('asdf', vt_api))
@@ -154,7 +154,7 @@ class TestUB(unittest.TestCase):
         self.assertTrue(is_gh)
         time.sleep(15)  # VT rate limiting
 
-    @unittest.skipIf(os.getenv("VT_API", True), "No VT_API set")
+    @unittest.skipUnless(os.getenv("VT_API"), "No VT_API set")
     def test_vt_hash_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_hash_check('asdf', vt_api))
@@ -169,7 +169,7 @@ class TestUB(unittest.TestCase):
         self.assertEqual(vt_hash_data['positives'], 0)
         time.sleep(15)  # VT rate limiting
 
-    @unittest.skipIf(os.getenv("VT_API", True), "No VT_API set")
+    @unittest.skipUnless(os.getenv("VT_API"), "No VT_API set")
     def test_vt_rate_limiting(self):
         vt_api = os.environ["VT_API"]
         # Exceed 4x in 60 seconds
@@ -202,7 +202,7 @@ class TestUB(unittest.TestCase):
         self.assertIsInstance(tor_data, dict)
         self.assertIn('ProjectHoneypot', tor_data)
 
-    @unittest.skipIf(os.getenv("URLVOID_API", True), "No VT_API set")
+    @unittest.skipUnless(os.getenv("URLVOID_API"), "No VT_API set")
     def test_urlvoid_check(self):
         urlvoid_api = os.environ["URLVOID_API"]
         self.assertIsNone(ub.urlvoid_check('asdf', urlvoid_api))
