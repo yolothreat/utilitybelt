@@ -151,7 +151,7 @@ def is_IPv6Address(ipv6address):
 def is_fqdn(address):
     """Returns true for valid DNS addresses, false for invalid."""
 
-    return re.match(re_fqdn, address)
+    return bool(re.match(re_fqdn, address))
 
 
 def is_url(url):
