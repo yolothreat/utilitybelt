@@ -26,6 +26,7 @@ gi = pygeoip.GeoIP("data/GeoLiteCity.dat", pygeoip.MEMORY_CACHE)
 
 # Indicators
 re_ipv4 = re.compile('(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)', re.I | re.S | re.M)
+re_ipv6 = re.compile('(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))', re.I | re.S | re.M)
 re_email = re.compile("\\b[A-Za-z0-9_.]+@[0-9a-z.-]+\\b", re.I | re.S | re.M)
 re_fqdn = re.compile('(?=^.{4,255}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+[a-zA-Z]{2,63}$)', re.I | re.S | re.M)
 re_cve = re.compile("(CVE-(19|20)\\d{2}-\\d{4,7})", re.I | re.S | re.M)
@@ -131,6 +132,22 @@ def is_IPv4Address(ipv4address):
     return bool(re.match(re_ipv4, ipv4address))
 
 
+def is_IPv6Address(ipv6address):
+    """
+        Returns true for valid IPv6 Addresses, false for invalid.
+        It should match:
+
+            IPv6 addresses
+            zero compressed IPv6 addresses (section 2.2 of rfc5952)
+            link-local IPv6 addresses with zone index (section 11 of rfc4007)
+            IPv4-Embedded IPv6 Address (section 2 of rfc6052)
+            IPv4-mapped IPv6 addresses (section 2.1 of rfc2765)
+            IPv4-translated addresses (section 2.1 of rfc2765)
+    """
+
+    return bool(re.match(re_ipv6, ipv6address))
+
+
 def is_fqdn(address):
     """Returns true for valid DNS addresses, false for invalid."""
 
@@ -141,6 +158,24 @@ def is_url(url):
     """Returns true for valid URLs, false for invalid."""
 
     return bool(re.match(re_url, url))
+
+
+def is_hash(fhash):
+    """Returns true for valid hashes, false for invalid."""
+
+    # Intentionally doing if/else statement for ease of testing and reading
+    if re.match(re_md5, fhash):
+        return True
+    elif re.match(re_sha1, fhash):
+        return True
+    elif re.match(re_sha256, fhash):
+        return True
+    elif re.match(re_sha512, fhash):
+        return True
+    elif re.match(re_ssdeep, fhash):
+        return True
+    else:
+        return False
 
 
 def ip_to_geo(ipaddress):
@@ -245,7 +280,10 @@ def vt_ip_check(ip, vt_api):
     url = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
     parameters = {'ip': ip, 'apikey': vt_api}
     response = requests.get(url, params=parameters)
-    return response.json()
+    try:
+        return response.json()
+    except ValueError:
+        return None
 
 
 def vt_name_check(domain, vt_api):
@@ -256,7 +294,24 @@ def vt_name_check(domain, vt_api):
     url = 'https://www.virustotal.com/vtapi/v2/domain/report'
     parameters = {'domain': domain, 'apikey': vt_api}
     response = requests.get(url, params=parameters)
-    return response.json()
+    try:
+        return response.json()
+    except ValueError:
+        return None
+
+
+def vt_hash_check(fhash, vt_api):
+    """Checks VirusTotal for occurrences of a file hash"""
+    if not is_hash(fhash):
+        return None
+
+    url = 'https://www.virustotal.com/vtapi/v2/file/report'
+    parameters = {'resource': fhash, 'apikey': vt_api}
+    response = requests.get(url, params=parameters)
+    try:
+        return response.json()
+    except ValueError:
+        return None
 
 
 def ipinfo_ip_check(ip):

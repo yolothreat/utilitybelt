@@ -1,4 +1,5 @@
 import os
+import time
 import unittest
 
 from utilitybelt import utilitybelt as ub
@@ -17,6 +18,19 @@ class TestUB(unittest.TestCase):
         self.assertFalse(ub.is_IPv4Address("256.1.1.1"))
         self.assertFalse(ub.is_IPv4Address("8.8.4"))
         self.assertFalse(ub.is_IPv4Address("google.com"))
+
+    def test_is_IPv6Address(self):
+        self.assertIsInstance(ub.is_IPv6Address("1:2:3:4:5:6:7:8"), bool)
+        self.assertTrue(ub.is_IPv6Address("1:2:3:4:5:6:7:8"))
+        self.assertTrue(ub.is_IPv6Address("::ffff:10.0.0.1"))
+        self.assertTrue(ub.is_IPv6Address("::ffff:1.2.3.4"))
+        self.assertTrue(ub.is_IPv6Address("::ffff:0.0.0.0"))
+        self.assertTrue(ub.is_IPv6Address("1:2:3:4:5:6:77:88"))
+        self.assertTrue(ub.is_IPv6Address("::ffff:255.255.255.255"))
+        self.assertTrue(ub.is_IPv6Address("fe08::7:8"))
+        self.assertTrue(ub.is_IPv6Address("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
+        self.assertFalse(ub.is_IPv6Address("google.com"))
+        self.assertFalse(ub.is_IPv6Address("8.8.4.4"))
 
     def test_is_url(self):
         self.assertIsInstance(ub.is_url("http://example.com"), bool)
@@ -95,6 +109,22 @@ class TestUB(unittest.TestCase):
         self.assertFalse(ub.is_reserved("8.8.4.4"))
         self.assertFalse(ub.is_reserved("192.30.252.131"))
 
+    def test_is_hash(self):
+        # all hashes of the empty string
+        self.assertIsInstance(ub.is_hash("d41d8cd98f00b204e9800998ecf8427e"), bool)
+        # MD5
+        self.assertTrue(ub.is_hash("d41d8cd98f00b204e9800998ecf8427e"))
+        # SHA1
+        self.assertTrue(ub.is_hash("da39a3ee5e6b4b0d3255bfef95601890afd80709"))
+        # SHA256
+        self.assertTrue(ub.is_hash("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"))
+        # SHA512
+        self.assertTrue(ub.is_hash("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"))
+        # ssdeep
+        self.assertTrue(ub.is_hash("96:EQOJvOl4ab3hhiNFXc4wwcweomr0cNJDBoqXjmAHKX8dEt001nfEhVIuX0dDcs:3mzpAsZpprbshfu3oujjdENdp21"))
+        self.assertFalse(ub.is_hash("KilroyWasHere"))
+
+    @unittest.skipUnless(os.getenv("VT_API"), "No VT_API set")
     def test_vt_ip_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_ip_check('asdf', vt_api))
@@ -109,7 +139,9 @@ class TestUB(unittest.TestCase):
             if resolution['hostname'] == "github.com":
                 is_gh = True
         self.assertTrue(is_gh)
+        time.sleep(15)  # VT rate limiting
 
+    @unittest.skipUnless(os.getenv("VT_API"), "No VT_API set")
     def test_vt_name_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_name_check('asdf', vt_api))
@@ -121,6 +153,39 @@ class TestUB(unittest.TestCase):
             if resolution['ip_address'] == '192.30.252.130':
                 is_gh = True
         self.assertTrue(is_gh)
+        time.sleep(15)  # VT rate limiting
+
+    @unittest.skipUnless(os.getenv("VT_API"), "No VT_API set")
+    def test_vt_hash_check(self):
+        vt_api = os.environ["VT_API"]
+        self.assertIsNone(ub.vt_hash_check('asdf', vt_api))
+        vt_hash_data = ub.vt_hash_check("fe03b4181707f1ea1f3c69dc0a9904181c6fce91", vt_api)
+        self.assertIsInstance(vt_hash_data, dict)
+        self.assertIn('resource', vt_hash_data)
+        self.assertIn('positives', vt_hash_data)
+        self.assertGreater(vt_hash_data['positives'], 0)
+        time.sleep(15)  # VT rate limiting
+        vt_hash_data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        self.assertIn('positives', vt_hash_data)
+        self.assertEqual(vt_hash_data['positives'], 0)
+        time.sleep(15)  # VT rate limiting
+
+    @unittest.skipUnless(os.getenv("VT_API"), "No VT_API set")
+    def test_vt_rate_limiting(self):
+        vt_api = os.environ["VT_API"]
+        # Exceed 4x in 60 seconds
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        self.assertIsInstance(data, dict)
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        data = ub.vt_name_check("example.org", vt_api)
+        self.assertIsNone(data)
+        data = ub.vt_ip_check("192.30.252.130", vt_api)
+        self.assertIsNone(data)
+        data = ub.vt_hash_check("d41d8cd98f00b204e9800998ecf8427e", vt_api)
+        self.assertIsNone(data)
+        time.sleep(15)
 
     def test_ipinfo(self):
         self.assertIsNone(ub.ipinfo_ip_check('asdf'))
@@ -138,6 +203,7 @@ class TestUB(unittest.TestCase):
         self.assertIsInstance(tor_data, dict)
         self.assertIn('ProjectHoneypot', tor_data)
 
+    @unittest.skipUnless(os.getenv("URLVOID_API"), "No VT_API set")
     def test_urlvoid_check(self):
         urlvoid_api = os.environ["URLVOID_API"]
         self.assertIsNone(ub.urlvoid_check('asdf', urlvoid_api))
