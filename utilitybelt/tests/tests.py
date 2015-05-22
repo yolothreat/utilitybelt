@@ -123,7 +123,7 @@ class TestUB(unittest.TestCase):
         self.assertTrue(ub.is_hash("96:EQOJvOl4ab3hhiNFXc4wwcweomr0cNJDBoqXjmAHKX8dEt001nfEhVIuX0dDcs:3mzpAsZpprbshfu3oujjdENdp21"))
         self.assertFalse(ub.is_hash("KilroyWasHere"))
 
-    @unittest.skipIf(os.getenv("VT_API"), "No VT_API set")
+    @unittest.skipUnless(os.getenv("VT_API"), "No VT_API set")
     def test_vt_ip_check(self):
         vt_api = os.environ["VT_API"]
         self.assertIsNone(ub.vt_ip_check('asdf', vt_api))
