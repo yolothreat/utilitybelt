@@ -48,6 +48,19 @@ class TestUB(unittest.TestCase):
         self.assertEqual(ub.domain_to_geo("github.com")["region_code"], 'CA')
         self.assertEqual(ub.domain_to_geo("github.com")["country_name"], 'United States')
 
+    def test_domain_to_mgeo(self):
+        self.assertIsInstance(ub.domain_to_mgeo("github.com"), list)
+        self.assertEqual(ub.domain_to_mgeo("github.com")[0]["city"], 'San Francisco')
+        self.assertEqual(ub.domain_to_mgeo("github.com")[0]["region_code"], 'CA')
+        self.assertEqual(ub.domain_to_mgeo("github.com")[0]["country_name"], 'United States')
+        heroku = ub.domain_to_mgeo("heroku.com")
+        self.assertIsInstance(heroku, list)
+        self.assertTrue(len(heroku)>1)
+        self.assertIsInstance(heroku[0], dict)
+        self.assertEqual(heroku[0]["city"], "Ashburn")
+        self.assertEqual(heroku[0]["region_code"], "VA")
+        self.assertEqual(heroku[0]["country_name"], "United States")
+
     def test_ip_to_geojson(self):
         self.assertIsInstance(ub.ip_to_geojson("192.30.252.130"), dict)
 

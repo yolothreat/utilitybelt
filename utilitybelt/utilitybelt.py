@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 
 import pygeoip
 import requests
+import warnings
 from bs4 import BeautifulSoup
 from netaddr import IPAddress
 from netaddr import IPNetwork
@@ -169,7 +170,21 @@ def ip_to_geo(ipaddress):
 def domain_to_geo(domain):
     """Convert Domain to Geographic Information"""
 
+    # Check if the domain resolves to multiple addresses and warn
+    # the user and suggest a different method
+    _, _, ips = socket.gethostbyname_ex(domain)
+    if len(ips) > 1:
+        warnings.warn("{domain} resolves to multiple ip addresses,".format(domain=domain), RuntimeWarning)
+
     return gi.record_by_name(domain)
+
+def domain_to_mgeo(domain):
+    """Convert a Domain to Geographic information. Safe for round robin DNS"""
+    locations = []
+    _, _, ips = socket.gethostbyname_ex(domain)
+    for eachIP in ips:
+        locations.append(gi.record_by_addr(eachIP))
+    return locations
 
 
 def ip_to_geojson(ipaddress, name="Point"):
