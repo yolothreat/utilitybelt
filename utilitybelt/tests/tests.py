@@ -39,10 +39,13 @@ class TestUB(unittest.TestCase):
     def test_is_fqdn(self):
         proper = ub.is_fqdn("www.heroku.com")
         improper = ub.is_fqdn("heroku")
+        addr = ub.is_fqdn("192.168.1.1")
         self.assertIsInstance(proper, bool)
         self.assertTrue(proper)
         self.assertIsInstance(improper, bool)
         self.assertFalse(improper)
+        self.assertIsInstance(addr, bool)
+        self.assertFalse(addr)
 
     # Geolocation Tests
     def test_ip_to_geo(self):
