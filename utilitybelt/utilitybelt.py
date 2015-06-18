@@ -82,6 +82,9 @@ def ip_between(ip, start, finish):
 
 
 def is_rfc1918(ip):
+    """Checks to see if an IP address is used for local communications within
+    a private network as specified by RFC 1918
+    """
     if ip_between(ip, "10.0.0.0", "10.255.255.255"):
         return True
     elif ip_between(ip, "172.16.0.0", "172.31.255.255"):
@@ -93,6 +96,12 @@ def is_rfc1918(ip):
 
 
 def is_reserved(ip):
+    """Checks to see if an IP address is reserved for special purposes. This includes
+    all of the RFC 1918 addresses as well as other blocks that are reserved by
+    IETF, and IANA for various reasons.
+
+    https://en.wikipedia.org/wiki/Reserved_IP_addresses
+    """
     if ip_between(ip, "0.0.0.0", "0.255.255.255"):
         return True
     elif ip_between(ip, "10.0.0.0", "10.255.255.255"):
